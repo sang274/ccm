@@ -1,3 +1,4 @@
+//src/services/api.ts
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7170/api';
@@ -13,17 +14,17 @@ class ApiClient {
       },
     });
 
+    // src/services/api.ts
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('accessToken');
+        console.log('Adding token to header:', token ? 'YES' : 'NO'); // THÊM DÒNG NÀY
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
     this.client.interceptors.response.use(

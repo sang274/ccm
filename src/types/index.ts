@@ -1,3 +1,4 @@
+//src/types/index.ts
 export enum UserRole {
   EvOwner = 0,
   Buyer = 1,

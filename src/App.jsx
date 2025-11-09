@@ -1,8 +1,8 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
-import { UserRole } from './types';
 
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -11,37 +11,25 @@ import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
 
-const DashboardRouter = () => {
-  const { user } = useAuth();
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  switch (user.role) {
-    case UserRole.EvOwner:
-      return <Navigate to="/ev-owner/dashboard" replace />;
-    case UserRole.Buyer:
-      return <Navigate to="/buyer/dashboard" replace />;
-    case UserRole.Cva:
-      return <Navigate to="/cva/dashboard" replace />;
-    case UserRole.Admin:
-      return <Navigate to="/admin/dashboard" replace />;
-    default:
-      return <Navigate to="/login" replace />;
-  }
-};
-
-const Unauthorized = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">403</h1>
-        <p className="text-xl text-gray-600">Bạn không có quyền truy cập trang này</p>
-      </div>
+const HomePage = () => (
+  <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center text-center">
+    <div>
+      <h1 className="text-4xl font-bold text-emerald-600 mb-4">
+        Carbon Credit Marketplace
+      </h1>
+      <p className="text-lg text-gray-600">
+        Chào mừng bạn đến với hệ thống giao dịch tín chỉ carbon
+      </p>
     </div>
-  );
-};
+  </div>
+);
+
+const Unauthorized = () => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
+    <h1 className="text-4xl font-bold text-gray-900 mb-4">403</h1>
+    <p className="text-xl text-gray-600">Bạn không có quyền truy cập trang này</p>
+  </div>
+);
 
 function App() {
   return (
@@ -51,40 +39,36 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-
-          <Route path="/" element={<DashboardRouter />} />
+          <Route path="/" element={<HomePage />} />
 
           <Route
             path="/ev-owner/dashboard"
             element={
-              <ProtectedRoute allowedRoles={[UserRole.EvOwner]}>
+              <ProtectedRoute allowedRoles={[0]}>
                 <EVOwnerDashboard />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/buyer/dashboard"
             element={
-              <ProtectedRoute allowedRoles={[UserRole.Buyer]}>
+              <ProtectedRoute allowedRoles={[1]}>
                 <BuyerDashboard />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/cva/dashboard"
             element={
-              <ProtectedRoute allowedRoles={[UserRole.Cva]}>
+              <ProtectedRoute allowedRoles={[2]}>
                 <CVADashboard />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute allowedRoles={[UserRole.Admin]}>
+              <ProtectedRoute allowedRoles={[3]}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
