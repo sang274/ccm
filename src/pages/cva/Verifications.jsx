@@ -12,18 +12,29 @@ export const Verifications = () => {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const res = await apiClient.get('/emission-reductions/pending');
-                setRequests(res.data.data || []);
+                const res = await apiClient.get('/cva/pending');
+                setRequests(res.data || []); // Đảm bảo là mảng
             } catch (err) {
-                console.error(err);
+                console.error('Lỗi tải yêu cầu:', err);
+                setRequests([]);
             } finally {
-                setLoading(false);
+                setLoading(false); // QUAN TRỌNG: Dừng loading dù thành công hay lỗi
             }
         };
+
         fetchRequests();
     }, []);
 
-    if (loading) return <Layout><div className="p-8 text-center">Đang tải...</div></Layout>;
+    if (loading) {
+        return (
+            <Layout>
+                <div className="p-8 text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                    <p className="mt-2 text-gray-600">Đang tải yêu cầu...</p>
+                </div>
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
@@ -43,41 +54,44 @@ export const Verifications = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {requests.map((req) => (
-                                <tr key={req.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        #{req.id.slice(0, 8)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {req.userEmail}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {req.reducedCO2Kg.toLocaleString()} kg
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {req.creditsEquivalent}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {new Date(req.createdAt).toLocaleDateString('vi-VN')}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                        <Link
-                                            to={`/cva/verification/${req.id}`}
-                                            className="text-emerald-600 hover:text-emerald-900 flex items-center gap-1"
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                            Xem
-                                        </Link>
+                            {requests.length > 0 ? (
+                                requests.map((req) => (
+                                    <tr key={req.id}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            #{req.id.slice(0, 8)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {req.user?.email || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {Number(req.reducedCO2Kg).toLocaleString()} kg
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {req.creditsEquivalent}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {new Date(req.createdAt).toLocaleDateString('vi-VN')}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <Link
+                                                to={`/cva/verification/${req.id}`}
+                                                className="text-emerald-600 hover:text-emerald-900 flex items-center gap-1"
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                                Xem
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" className="text-center py-8 text-gray-500">
+                                        Không có yêu cầu nào đang chờ xác minh
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
-                    {requests.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                            Không có yêu cầu nào đang chờ xác minh
-                        </div>
-                    )}
                 </div>
             </div>
         </Layout>
