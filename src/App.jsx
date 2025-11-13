@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
-import { RootRedirect } from './components/RootRedirect'; // ĐÃ CÓ
+import { RootRedirect } from './components/RootRedirect';
 
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -12,9 +12,13 @@ import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
 
-// THÊM 2 DÒNG NÀY
+// CVA VERIFICATIONS
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
+
+// THÊM 2 DÒNG IMPORT NÀY
+import { Reports } from './pages/cva/Reports';
+import { ReportDetail } from './pages/cva/ReportDetail';
 
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
@@ -81,6 +85,24 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={[2]}>
                 <VerificationDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* CVA REPORTS */}
+          <Route
+            path="/cva/reports"
+            element={
+              <ProtectedRoute allowedRoles={[2]}>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cva/report/:id"
+            element={
+              <ProtectedRoute allowedRoles={[2]}>
+                <ReportDetail />
               </ProtectedRoute>
             }
           />
