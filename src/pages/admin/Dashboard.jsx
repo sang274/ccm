@@ -65,7 +65,7 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link
             to="/admin/users"
             className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
@@ -85,12 +85,30 @@ export const AdminDashboard = () => {
           </Link>
 
           <Link
-            to="/admin/reports"
+            to="/admin/wallets"
             className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+          >
+            <TrendingUp className="h-12 w-12 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Ví điện tử</h3>
+            <p className="text-purple-100">Quản lý ví và dòng tiền</p>
+          </Link>
+
+          <Link
+            to="/admin/listings"
+            className="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+          >
+            <FileText className="h-12 w-12 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Niêm yết</h3>
+            <p className="text-orange-100">Quản lý niêm yết tín chỉ</p>
+          </Link>
+
+          <Link
+            to="/admin/reports"
+            className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
           >
             <FileText className="h-12 w-12 mb-4" />
             <h3 className="text-xl font-bold mb-2">Báo cáo</h3>
-            <p className="text-purple-100">Xuất báo cáo tổng hợp</p>
+            <p className="text-indigo-100">Xuất báo cáo tổng hợp</p>
           </Link>
         </div>
       </div>

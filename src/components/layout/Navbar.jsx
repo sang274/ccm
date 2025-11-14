@@ -109,6 +109,12 @@ export const Navbar = () => {
                     <Link to="/admin/transactions" className="text-white hover:text-emerald-100 transition-colors font-medium">
                       Giao dịch
                     </Link>
+                    <Link to="/admin/wallets" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Ví
+                    </Link>
+                    <Link to="/admin/listings" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Niêm yết
+                    </Link>
                     <Link to="/admin/reports" className="text-white hover:text-emerald-100 transition-colors font-medium">
                       Báo cáo
                     </Link>

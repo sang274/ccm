@@ -15,6 +15,15 @@ import { AdminDashboard } from './pages/admin/Dashboard';
 // THÊM 2 DÒNG NÀY
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
+import { Reports as CVAReports } from './pages/cva/Reports';
+import { ReportDetail } from './pages/cva/ReportDetail';
+
+// Admin pages
+import { Users } from './pages/admin/Users';
+import { Transactions } from './pages/admin/Transactions';
+import { Wallets } from './pages/admin/Wallets';
+import { Listings } from './pages/admin/Listings';
+import { Reports as AdminReports } from './pages/admin/Reports';
 
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
@@ -81,6 +90,66 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={[2]}>
                 <VerificationDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* CVA REPORTS */}
+          <Route
+            path="/cva/reports"
+            element={
+              <ProtectedRoute allowedRoles={[2]}>
+                <CVAReports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cva/report/:id"
+            element={
+              <ProtectedRoute allowedRoles={[2]}>
+                <ReportDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ADMIN ROUTES */}
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/transactions"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Transactions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/wallets"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Wallets />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/listings"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Listings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <AdminReports />
               </ProtectedRoute>
             }
           />
