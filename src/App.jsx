@@ -15,6 +15,12 @@ import { AdminDashboard } from './pages/admin/Dashboard';
 // THÊM 2 DÒNG NÀY
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
+// BUYER pages
+import  Market  from './pages/market/Market';
+import  CreditDetail  from './pages/market/CreditDetail';
+import  Auctions  from './pages/market/Auctions';
+import Certificates from './pages/market/Certificates';
+
 
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
@@ -50,6 +56,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/cva/dashboard"
             element={
@@ -84,6 +91,39 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/market"
+            element={
+              <ProtectedRoute allowedRoles={[1]}>
+                <Market />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/market/credit/:id"
+            element={
+              <ProtectedRoute allowedRoles={[1]}>
+                <CreditDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/market/auctions"
+            element={
+              <ProtectedRoute allowedRoles={[1]}>
+                <Auctions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/market/certificates"
+            element={
+              <ProtectedRoute allowedRoles={[1]}>
+                <Certificates />
+              </ProtectedRoute>
+            }
+          />
+
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
