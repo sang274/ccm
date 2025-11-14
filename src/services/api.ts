@@ -56,6 +56,13 @@ class ApiClient {
   delete<T>(url: string) {
     return this.client.delete<T>(url);
   }
+
+  async downloadPdf(id: string): Promise<Blob> {
+    const response = await this.client.get(`/cva/report/${id}/pdf`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  }
 }
 
 export const apiClient = new ApiClient();

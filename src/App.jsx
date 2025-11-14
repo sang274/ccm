@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
-import { RootRedirect } from './components/RootRedirect'; // ĐÃ CÓ
+import { RootRedirect } from './components/RootRedirect';
 
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -12,7 +12,7 @@ import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
 
-// THÊM 2 DÒNG NÀY
+// CVA VERIFICATIONS
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
 import { Reports as CVAReports } from './pages/cva/Reports';
@@ -24,6 +24,10 @@ import { Transactions } from './pages/admin/Transactions';
 import { Wallets } from './pages/admin/Wallets';
 import { Listings } from './pages/admin/Listings';
 import { Reports as AdminReports } from './pages/admin/Reports';
+
+// THÊM 2 DÒNG IMPORT NÀY
+import { Reports } from './pages/cva/Reports';
+import { ReportDetail } from './pages/cva/ReportDetail';
 
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
@@ -99,7 +103,7 @@ function App() {
             path="/cva/reports"
             element={
               <ProtectedRoute allowedRoles={[2]}>
-                <CVAReports />
+                <Reports />
               </ProtectedRoute>
             }
           />
