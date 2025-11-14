@@ -1,7 +1,7 @@
 // src/App.jsx
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { RootRedirect } from './components/RootRedirect';
 
@@ -12,7 +12,7 @@ import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
 
-// CVA VERIFICATIONS
+// CVA pages
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
 import { Reports as CVAReports } from './pages/cva/Reports';
@@ -25,10 +25,6 @@ import { Wallets } from './pages/admin/Wallets';
 import { Listings } from './pages/admin/Listings';
 import { Reports as AdminReports } from './pages/admin/Reports';
 
-// THÊM 2 DÒNG IMPORT NÀY
-import { Reports } from './pages/cva/Reports';
-import { ReportDetail } from './pages/cva/ReportDetail';
-
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
     <h1 className="text-4xl font-bold text-gray-900 mb-4">403</h1>
@@ -38,9 +34,10 @@ const Unauthorized = () => (
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -103,7 +100,7 @@ function App() {
             path="/cva/reports"
             element={
               <ProtectedRoute allowedRoles={[2]}>
-                <Reports />
+                <CVAReports />
               </ProtectedRoute>
             }
           />
@@ -159,9 +156,10 @@ function App() {
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

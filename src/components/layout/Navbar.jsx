@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types';
 import { Leaf, LogOut, User, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
@@ -46,7 +47,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-emerald-700 to-teal-600 shadow-lg sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-emerald-700 to-teal-600 dark:from-emerald-800 dark:to-teal-700 shadow-lg sticky top-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -128,6 +129,7 @@ export const Navbar = () => {
                       <span className="text-xs text-emerald-200">{getRoleLabel(user.role)}</span>
                     </div>
                   </div>
+                  <ThemeToggle />
                   <button
                     onClick={handleLogout}
                     className="flex items-center space-x-1 text-white hover:text-emerald-100 transition-colors"
