@@ -1,12 +1,31 @@
 // src/pages/cva/Dashboard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // THÊM useState + useEffect
 import { Link } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { useAuth } from '../../contexts/AuthContext';
+import { apiClient } from '../../services/api'; // THÊM apiClient
 import { CheckCircle, XCircle, Clock, FileText } from 'lucide-react';
 
 export const CVADashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState({
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    reports: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await apiClient.get('/cva/stats');
+        setStats(res.data);
+      } catch (err) {
+        console.error('Lỗi tải thống kê:', err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <Layout>
@@ -21,7 +40,7 @@ export const CVADashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Chờ xác minh</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">0</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.pending}</p>
               </div>
               <div className="bg-yellow-100 p-3 rounded-full">
                 <Clock className="h-8 w-8 text-yellow-600" />
@@ -33,7 +52,7 @@ export const CVADashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Đã duyệt</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">0</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.approved}</p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
                 <CheckCircle className="h-8 w-8 text-green-600" />
@@ -45,7 +64,7 @@ export const CVADashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Đã từ chối</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">0</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.rejected}</p>
               </div>
               <div className="bg-red-100 p-3 rounded-full">
                 <XCircle className="h-8 w-8 text-red-600" />
@@ -57,7 +76,7 @@ export const CVADashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Báo cáo</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">0</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.reports}</p>
               </div>
               <div className="bg-blue-100 p-3 rounded-full">
                 <FileText className="h-8 w-8 text-blue-600" />

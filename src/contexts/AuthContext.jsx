@@ -11,20 +11,32 @@ export const AuthProvider = ({ children }) => {
   // CHỈ 1 useEffect: Khởi tạo khi reload trang
   useEffect(() => {
     const initAuth = async () => {
-      if (authService.isAuthenticated()) {
-        const storedUser = authService.getStoredUser();
-        if (storedUser) {
-          setUser(storedUser);
-        } else {
-          // Nếu không có trong localStorage → gọi API
-          const currentUser = await authService.getCurrentUser();
-          if (currentUser) {
-            localStorage.setItem('user', JSON.stringify(currentUser));
-            setUser(currentUser);
+      try {
+        console.log('AuthContext: Initializing...');
+        if (authService.isAuthenticated()) {
+          const storedUser = authService.getStoredUser();
+          if (storedUser) {
+            console.log('AuthContext: User found in localStorage', storedUser);
+            setUser(storedUser);
+          } else {
+            // Nếu không có trong localStorage → gọi API
+            console.log('AuthContext: Fetching user from API...');
+            const currentUser = await authService.getCurrentUser();
+            if (currentUser) {
+              localStorage.setItem('user', JSON.stringify(currentUser));
+              setUser(currentUser);
+              console.log('AuthContext: User fetched and stored', currentUser);
+            }
           }
+        } else {
+          console.log('AuthContext: Not authenticated');
         }
+      } catch (error) {
+        console.error('AuthContext: Initialization error', error);
+      } finally {
+        setLoading(false);
+        console.log('AuthContext: Initialization complete');
       }
-      setLoading(false);
     };
     initAuth();
   }, []);
