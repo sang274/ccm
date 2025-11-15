@@ -23,12 +23,12 @@ export const walletService = {
   },
 
   async update(id: string, data: Partial<Wallet>) {
-    const response = await apiClient.put<Wallet>(`/wallet`, data);
+    const response = await apiClient.put<Wallet>(`/wallet/${id}`, data);
     return response.data;
   },
 
   async delete(id: string) {
-    const response = await apiClient.delete<boolean>(`/wallet`);
+    const response = await apiClient.delete<boolean>(`/wallet/${id}`);
     return response.data;
   },
 };

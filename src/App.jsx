@@ -1,7 +1,7 @@
 // src/App.jsx
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { RootRedirect } from './components/RootRedirect';
 
@@ -12,13 +12,18 @@ import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
 
-// CVA VERIFICATIONS
+// CVA pages
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
-
-// THÊM 2 DÒNG IMPORT NÀY
-import { Reports } from './pages/cva/Reports';
+import { Reports as CVAReports } from './pages/cva/Reports';
 import { ReportDetail } from './pages/cva/ReportDetail';
+
+// Admin pages
+import { Users } from './pages/admin/Users';
+import { Transactions } from './pages/admin/Transactions';
+import { Wallets } from './pages/admin/Wallets';
+import { Listings } from './pages/admin/Listings';
+import { Reports as AdminReports } from './pages/admin/Reports';
 
 const Unauthorized = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center">
@@ -29,9 +34,10 @@ const Unauthorized = () => (
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -94,7 +100,7 @@ function App() {
             path="/cva/reports"
             element={
               <ProtectedRoute allowedRoles={[2]}>
-                <Reports />
+                <CVAReports />
               </ProtectedRoute>
             }
           />
@@ -107,10 +113,53 @@ function App() {
             }
           />
 
+          {/* ADMIN ROUTES */}
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/transactions"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Transactions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/wallets"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Wallets />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/listings"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <Listings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute allowedRoles={[3]}>
+                <AdminReports />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

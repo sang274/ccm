@@ -2,6 +2,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7170/api';
+console.log('API Base URL:', API_BASE_URL);
 
 class ApiClient {
   private client: AxiosInstance;

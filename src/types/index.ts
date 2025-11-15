@@ -62,6 +62,7 @@ export interface User {
   metadata?: any;
   createdAt: string;
   updatedAt: string;
+  status?: string; // Active, Inactive, Suspended, etc.
 }
 
 export interface Vehicle {
