@@ -95,8 +95,8 @@ export const Transactions = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý giao dịch</h1>
-            <p className="text-gray-600 mt-1">Theo dõi và xử lý tất cả giao dịch</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Quản lý giao dịch</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Theo dõi và xử lý tất cả giao dịch</p>
           </div>
           <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
             <Download className="h-5 w-5" />
@@ -106,71 +106,71 @@ export const Transactions = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100 p-2 rounded-lg">
                 <DollarSign className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Tổng giao dịch</p>
-                <p className="text-2xl font-bold text-gray-900">${totalAmount.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Tổng giao dịch</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalAmount.toFixed(2)}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="bg-green-100 p-2 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Đã hoàn thành</p>
-                <p className="text-2xl font-bold text-gray-900">${completedAmount.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Đã hoàn thành</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">${completedAmount.toFixed(2)}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="bg-yellow-100 p-2 rounded-lg">
-                <Clock className="h-6 w-6 text-yellow-600" />
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-lg">
+                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Chờ xử lý</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingCount}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Chờ xử lý</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingCount}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="bg-orange-100 p-2 rounded-lg">
-                <AlertTriangle className="h-6 w-6 text-orange-600" />
+              <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg">
+                <AlertTriangle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Tranh chấp</p>
-                <p className="text-2xl font-bold text-gray-900">{disputeCount}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Tranh chấp</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{disputeCount}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Tìm kiếm theo ID, email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="0">Chờ xử lý</option>
@@ -184,61 +184,61 @@ export const Transactions = () => {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden transition-colors">
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Đang tải...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">Đang tải...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 transition-colors">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       ID
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Người mua
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Người bán
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Số lượng
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Giá trị
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Trạng thái
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Ngày tạo
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Thao tác
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
                   {filteredTransactions.map((tx) => {
                     const StatusIcon = STATUS_ICONS[tx.status];
                     return (
-                      <tr key={tx.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                           #{tx.id}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                           {tx.buyerEmail}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                           {tx.sellerEmail}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {tx.units} tín chỉ
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                           ${tx.amount.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -247,7 +247,7 @@ export const Transactions = () => {
                             {STATUS_LABELS[tx.status]}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {new Date(tx.createdAt).toLocaleDateString('vi-VN')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -268,9 +268,9 @@ export const Transactions = () => {
               </table>
               {filteredTransactions.length === 0 && (
                 <div className="text-center py-12">
-                  <DollarSign className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">Không có giao dịch</h3>
-                  <p className="mt-1 text-sm text-gray-500">Không tìm thấy giao dịch nào phù hợp.</p>
+                  <DollarSign className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Không có giao dịch</h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Không tìm thấy giao dịch nào phù hợp.</p>
                 </div>
               )}
             </div>
@@ -280,43 +280,43 @@ export const Transactions = () => {
         {/* Transaction Detail Modal */}
         {showModal && selectedTransaction && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Chi tiết giao dịch #{selectedTransaction.id}</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-colors">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Chi tiết giao dịch #{selectedTransaction.id}</h2>
               </div>
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Người mua</p>
-                    <p className="font-medium">{selectedTransaction.buyerEmail}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Người mua</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.buyerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Người bán</p>
-                    <p className="font-medium">{selectedTransaction.sellerEmail}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Người bán</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.sellerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Số lượng</p>
-                    <p className="font-medium">{selectedTransaction.units} tín chỉ</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Số lượng</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.units} tín chỉ</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Giá trị</p>
-                    <p className="font-medium">${selectedTransaction.amount.toFixed(2)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Giá trị</p>
+                    <p className="font-medium text-gray-900 dark:text-white">${selectedTransaction.amount.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Trạng thái</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Trạng thái</p>
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${STATUS_COLORS[selectedTransaction.status]}`}>
                       {STATUS_LABELS[selectedTransaction.status]}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Ngày tạo</p>
-                    <p className="font-medium">{new Date(selectedTransaction.createdAt).toLocaleString('vi-VN')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{new Date(selectedTransaction.createdAt).toLocaleString('vi-VN')}</p>
                   </div>
                 </div>
 
                 {selectedTransaction.status === 0 && (
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-sm font-medium text-gray-900 mb-3">Thao tác</p>
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">Thao tác</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleStatusChange(selectedTransaction.id, 1)}
@@ -335,8 +335,8 @@ export const Transactions = () => {
                 )}
 
                 {selectedTransaction.status === 4 && (
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-sm font-medium text-gray-900 mb-3">Xử lý tranh chấp</p>
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">Xử lý tranh chấp</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleStatusChange(selectedTransaction.id, 2)}
@@ -354,10 +354,10 @@ export const Transactions = () => {
                   </div>
                 )}
               </div>
-              <div className="p-6 border-t border-gray-200 flex justify-end">
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                 >
                   Đóng
                 </button>

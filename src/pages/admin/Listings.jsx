@@ -86,78 +86,78 @@ export const Listings = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý niêm yết</h1>
-            <p className="text-gray-600 mt-1">Quản lý tất cả niêm yết tín chỉ carbon</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Quản lý niêm yết</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Quản lý tất cả niêm yết tín chỉ carbon</p>
           </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100 p-2 rounded-lg">
                 <Package className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Tổng niêm yết</p>
-                <p className="text-2xl font-bold text-gray-900">{totalListings}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Tổng niêm yết</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalListings}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
               <div className="bg-green-100 p-2 rounded-lg">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Đang niêm yết</p>
-                <p className="text-2xl font-bold text-gray-900">{activeListings}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Đang niêm yết</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{activeListings}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
               <div className="bg-yellow-100 p-2 rounded-lg">
                 <Clock className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Chờ duyệt</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingListings}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Chờ duyệt</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingListings}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
             <div className="flex items-center gap-3">
               <div className="bg-purple-100 p-2 rounded-lg">
                 <Package className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Giá trị niêm yết</p>
-                <p className="text-2xl font-bold text-gray-900">${totalValue.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Giá trị niêm yết</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalValue.toFixed(2)}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Tìm kiếm theo ID, email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="0">Chờ duyệt</option>
@@ -170,60 +170,60 @@ export const Listings = () => {
         </div>
 
         {/* Listings Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden transition-colors">
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Đang tải...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">Đang tải...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 transition-colors">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       ID
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Người bán
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Số lượng
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Giá/đơn vị
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Tổng giá trị
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Trạng thái
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Ngày tạo
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Thao tác
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
                   {filteredListings.map((listing) => (
-                    <tr key={listing.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr key={listing.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                         #{listing.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{listing.sellerName}</div>
-                        <div className="text-sm text-gray-500">{listing.sellerEmail}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{listing.sellerName}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{listing.sellerEmail}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                         {listing.units} tín chỉ
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                         ${listing.pricePerUnit.toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                         ${listing.totalValue.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -231,7 +231,7 @@ export const Listings = () => {
                           {STATUS_LABELS[listing.status]}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {new Date(listing.createdAt).toLocaleDateString('vi-VN')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -252,8 +252,8 @@ export const Listings = () => {
               {filteredListings.length === 0 && (
                 <div className="text-center py-12">
                   <Package className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">Không có niêm yết</h3>
-                  <p className="mt-1 text-sm text-gray-500">Không tìm thấy niêm yết nào phù hợp.</p>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Không có niêm yết</h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Không tìm thấy niêm yết nào phù hợp.</p>
                 </div>
               )}
             </div>
@@ -263,51 +263,51 @@ export const Listings = () => {
         {/* Listing Detail Modal */}
         {showModal && selectedListing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Chi tiết niêm yết #{selectedListing.id}</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-colors">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Chi tiết niêm yết #{selectedListing.id}</h2>
               </div>
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Người bán</p>
-                    <p className="font-medium">{selectedListing.sellerName}</p>
-                    <p className="text-sm text-gray-500">{selectedListing.sellerEmail}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Người bán</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedListing.sellerName}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{selectedListing.sellerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Trạng thái</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Trạng thái</p>
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${STATUS_COLORS[selectedListing.status]}`}>
                       {STATUS_LABELS[selectedListing.status]}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Số lượng</p>
-                    <p className="font-medium">{selectedListing.units} tín chỉ</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Số lượng</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedListing.units} tín chỉ</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Giá/đơn vị</p>
-                    <p className="font-medium">${selectedListing.pricePerUnit.toFixed(2)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Giá/đơn vị</p>
+                    <p className="font-medium text-gray-900 dark:text-white">${selectedListing.pricePerUnit.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Tổng giá trị</p>
-                    <p className="font-medium text-lg">${selectedListing.totalValue.toFixed(2)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Tổng giá trị</p>
+                    <p className="font-medium text-lg text-gray-900 dark:text-white">${selectedListing.totalValue.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Ngày tạo</p>
-                    <p className="font-medium">{new Date(selectedListing.createdAt).toLocaleString('vi-VN')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{new Date(selectedListing.createdAt).toLocaleString('vi-VN')}</p>
                   </div>
                 </div>
 
                 {selectedListing.description && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-2">Mô tả</p>
-                    <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{selectedListing.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Mô tả</p>
+                    <p className="text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">{selectedListing.description}</p>
                   </div>
                 )}
 
                 {selectedListing.status === 0 && (
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-sm font-medium text-gray-900 mb-3">Thao tác duyệt</p>
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">Thao tác duyệt</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleStatusChange(selectedListing.id, 1)}
@@ -325,10 +325,10 @@ export const Listings = () => {
                   </div>
                 )}
               </div>
-              <div className="p-6 border-t border-gray-200 flex justify-end">
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                 >
                   Đóng
                 </button>
@@ -340,3 +340,4 @@ export const Listings = () => {
     </Layout>
   );
 };
+
