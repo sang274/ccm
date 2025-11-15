@@ -58,6 +58,27 @@ export const authService = {
     }
   },
 
+  async register(data: {
+    email: string;
+    password: string;
+    passwordConfirm: string;
+    fullName: string;
+    phone: string;
+  }) {
+    try {
+      console.log('Register request:', data);
+      
+      const response = await apiClient.post<ApiResponse<any>>('/auth/register', data);
+      
+      console.log('Register API response:', response.data);
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Register error:', error);
+      throw error;
+    }
+  },
+
   async getCurrentUser(): Promise<User | null> {
     try {
       const response = await apiClient.get<ApiResponse<any>>('/user/me');
