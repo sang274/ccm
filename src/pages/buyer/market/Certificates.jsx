@@ -34,21 +34,7 @@ export default function Certificates() {
     } catch (e) {
       console.error('Lỗi khi tải chứng nhận:', e);
       setError(`Lỗi: ${e.message}. Vui lòng thử lại sau.`);
-      // Fallback dữ liệu mẫu nếu cả hai API thất bại
-      setCerts([
-        {
-          id: 'demo-1',
-          title: 'Chứng nhận demo - Rừng A',
-          issuedAt: '2025-11-01T10:00:00Z',
-          downloadUrl: '#', // URL giả lập, thay bằng link thực tế
-        },
-        {
-          id: 'demo-2',
-          title: 'Chứng nhận demo - Trồng cây',
-          issuedAt: '2025-11-02T14:00:00Z',
-          downloadUrl: '#',
-        },
-      ]);
+      setCerts([]); // Đặt danh sách rỗng khi gặp lỗi
     } finally {
       setLoading(false);
     }
@@ -64,6 +50,9 @@ export default function Certificates() {
       <h1 className="text-2xl font-bold mb-4">Chứng nhận tín chỉ</h1>
       {error && <div className="text-red-600 mb-3">{error}</div>}
       {loading && <div>Đang tải...</div>}
+      {!loading && certs.length === 0 && !error && (
+        <div>Không có chứng nhận nào hiện tại.</div>
+      )}
       <div className="grid md:grid-cols-2 gap-4">
         {certs.map((c) => (
           <div key={c.id} className="bg-white p-4 rounded shadow">

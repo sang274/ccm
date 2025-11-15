@@ -16,32 +16,15 @@ export default function Auctions() {
       // Gọi API để lấy danh sách phiên đấu giá
       const res = await fetch(`${API_BASE}/auctions`);
       if (!res.ok) {
-        throw new Error('Không tìm thấy phiên đấu giá (backend chưa có). Hiện đang hiển thị dữ liệu mẫu.');
+        throw new Error('Không tìm thấy phiên đấu giá.');
       }
       const data = await res.json();
       // Xử lý dữ liệu, ưu tiên mảng items nếu có, nếu không dùng toàn bộ data
       setAuctions(Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : []);
     } catch (e) {
-      // Fallback đến dữ liệu mẫu nếu API thất bại
+      // Chỉ hiển thị thông báo lỗi, không dùng dữ liệu mẫu
       setError(e.message);
-      setAuctions([
-        {
-          id: 'demo-1',
-          title: 'Phiên đấu giá demo - Rừng B',
-          startAt: '2025-11-01T10:00:00Z', // Thời gian cố định
-          currentBid: 12.5,
-          quantity: 100,
-          description: 'Phiên đấu giá demo cho rừng B',
-        },
-        {
-          id: 'demo-2',
-          title: 'Phiên đấu giá demo - Trồng rừng',
-          startAt: '2025-11-02T14:00:00Z', // Thời gian cố định
-          currentBid: 8.2,
-          quantity: 50,
-          description: 'Phiên đấu giá demo cho trồng rừng',
-        },
-      ]);
+      setAuctions([]);
     } finally {
       setLoading(false);
     }
@@ -50,7 +33,7 @@ export default function Auctions() {
   // Hàm tham gia đấu giá
   async function joinAuction(aid) {
     try {
-      const res = await fetch(`${API_BASE}/auctions/join`, {
+      const res = await fetch(`${API_BASE}/auction/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId: aid }),
@@ -72,6 +55,9 @@ export default function Auctions() {
       <h1 className="text-2xl font-bold mb-4">Phiên đấu giá</h1>
       {error && <div className="text-yellow-700 mb-3">{error}</div>}
       {loading && <div>Đang tải...</div>}
+      {!loading && auctions.length === 0 && !error && (
+        <div>Không có phiên đấu giá nào hiện tại.</div>
+      )}
       <div className="grid md:grid-cols-2 gap-4">
         {auctions.map((a) => (
           <div key={a.id} className="bg-white p-4 rounded shadow">

@@ -16,10 +16,10 @@ import { AdminDashboard } from './pages/admin/Dashboard';
 import { Verifications } from './pages/cva/Verifications';
 import { VerificationDetail } from './pages/cva/VerificationDetail';
 // BUYER pages
-import  Market  from './pages/market/Market';
-import  CreditDetail  from './pages/market/CreditDetail';
-import  Auctions  from './pages/market/Auctions';
-import Certificates from './pages/market/Certificates';
+import  Market  from './pages/buyer/market/Market';
+import  CreditDetail  from './pages/buyer/market/CreditDetail';
+import  Auctions  from './pages/buyer/market/Auctions';
+import Certificates from './pages/buyer/market/Certificates';
 
 
 const Unauthorized = () => (
@@ -100,7 +100,7 @@ function App() {
             }
           />
           <Route
-            path="/market/credit/:id"
+            path="/buyer/market/credit/:id"
             element={
               <ProtectedRoute allowedRoles={[1]}>
                 <CreditDetail />
@@ -108,7 +108,7 @@ function App() {
             }
           />
           <Route
-            path="/market/auctions"
+            path="/buyer/market/auctions"
             element={
               <ProtectedRoute allowedRoles={[1]}>
                 <Auctions />
@@ -116,7 +116,7 @@ function App() {
             }
           />
           <Route
-            path="/market/certificates"
+            path="/buyer/market/certificates"
             element={
               <ProtectedRoute allowedRoles={[1]}>
                 <Certificates />
