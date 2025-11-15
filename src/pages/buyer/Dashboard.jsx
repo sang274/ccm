@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { useAuth } from '../../contexts/AuthContext';
@@ -77,12 +77,12 @@ export const BuyerDashboard = () => {
     <Layout>
       <div className="max-w-5xl mx-auto p-6 space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Buyer Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome, {user?.fullName || user?.email}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Buyer Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">Welcome, {user?.fullName || user?.email}</p>
         </div>
 
-        {error && <div className="text-red-600 mb-6">{error}</div>}
-        {loading && <div className="text-gray-600">Loading...</div>}
+        {error && <div className="text-red-600 dark:text-red-400 mb-6">{error}</div>}
+        {loading && <div className="text-gray-600 dark:text-gray-300">Loading...</div>}
 
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

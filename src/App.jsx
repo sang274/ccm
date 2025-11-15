@@ -134,6 +134,30 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path="/buyer/marketplace"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <Market />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/buyer/my-purchases"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <Market />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/buyer/certificates"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <Certificates />
+                                </ProtectedRoute>
+                            }
+                        />
 
                         {/* CVA REPORTS */}
                         <Route
