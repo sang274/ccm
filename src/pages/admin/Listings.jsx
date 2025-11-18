@@ -84,7 +84,7 @@ export const Listings = () => {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between animate-fadeInUp">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Quản lý niêm yết</h1>
             <p className="text-gray-600 dark:text-gray-300 mt-1">Quản lý tất cả niêm yết tín chỉ carbon</p>
@@ -93,9 +93,9 @@ export const Listings = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeInUp animation-delay-100">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-100 p-2 rounded-lg">
+              <div className="bg-blue-100 p-2 rounded-lg transition-transform duration-300 hover:scale-110">
                 <Package className="h-6 w-6 text-blue-600" />
               </div>
               <div>
@@ -104,9 +104,9 @@ export const Listings = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeInUp animation-delay-200">
             <div className="flex items-center gap-3">
-              <div className="bg-green-100 p-2 rounded-lg">
+              <div className="bg-green-100 p-2 rounded-lg transition-transform duration-300 hover:scale-110">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div>
@@ -115,9 +115,9 @@ export const Listings = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeInUp animation-delay-300">
             <div className="flex items-center gap-3">
-              <div className="bg-yellow-100 p-2 rounded-lg">
+              <div className="bg-yellow-100 p-2 rounded-lg transition-transform duration-300 hover:scale-110">
                 <Clock className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
@@ -126,9 +126,9 @@ export const Listings = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-fadeInUp animation-delay-400">
             <div className="flex items-center gap-3">
-              <div className="bg-purple-100 p-2 rounded-lg">
+              <div className="bg-purple-100 p-2 rounded-lg transition-transform duration-300 hover:scale-110">
                 <Package className="h-6 w-6 text-purple-600" />
               </div>
               <div>
