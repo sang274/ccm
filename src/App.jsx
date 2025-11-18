@@ -19,10 +19,10 @@ import { Reports as CVAReports } from './pages/cva/Reports';
 import { ReportDetail } from './pages/cva/ReportDetail';
 
 // BUYER pages
-import Market from './pages/buyer/market/Market';
-import CreditDetail from './pages/buyer/market/CreditDetail';
-import Auctions from './pages/buyer/market/Auctions';
-import Certificates from './pages/buyer/market/Certificates';
+import Market from './pages/buyer/Market';
+import CreditDetail from './pages/buyer/CreditDetail';
+import Auctions from './pages/buyer/Auctions';
+import Certificates from './pages/buyer/Certificates';
 
 // Admin pages
 import { Users } from './pages/admin/Users';
@@ -111,7 +111,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/credit/:id"
+                            path="/buyer/credit/:id"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <CreditDetail />
@@ -119,7 +119,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/auctions"
+                            path="/buyer/auctions"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <Auctions />
@@ -127,7 +127,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/certificates"
+                            path="/buyer/certificates"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <Certificates />

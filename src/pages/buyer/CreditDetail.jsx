@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
 // Sử dụng biến môi trường Vite hoặc fallback URL
-const API_BASE = import.meta.env.VITE_APP_API_BASE || 'https://your-api-base-url.com';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7170/api';
 
 const CreditDetail = () => {
 
@@ -67,7 +67,7 @@ const CreditDetail = () => {
             Mua ngay
           </Link>
           <button
-            onClick={() => navigate('/market/auctions')}
+            onClick={() => navigate('/buyer/auctions')}
             className="px-4 py-2 border rounded"
           >
             Xem đấu giá
