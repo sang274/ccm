@@ -30,6 +30,7 @@ import Certificates from './pages/buyer/Certificates';
 import PurchaseHistory from './pages/buyer/PurchaseHistory';
 import Wallet from './pages/buyer/Wallet';
 import Deposit from './pages/buyer/Deposit';
+import WalletCallback from './pages/buyer/WalletCallback';
 
 // Admin pages
 import { Users } from './pages/admin/Users';
@@ -55,6 +56,7 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/unauthorized" element={<Unauthorized />} />
                         <Route path="/" element={<RootRedirect />} />
+                        <Route path="/buyer/wallet/callback" element={<WalletCallback />} />
 
                         {/* DASHBOARDS */}
                         <Route

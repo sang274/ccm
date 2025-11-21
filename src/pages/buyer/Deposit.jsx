@@ -1,3 +1,4 @@
+//src/pages/buyer/Deposit.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
@@ -40,42 +41,33 @@ export default function Deposit() {
     setAmount(value.toString());
   };
 
+  // src/pages/buyer/Deposit.jsx
+
+  // src/pages/buyer/Deposit.jsx → trong handleDeposit()
+
   const handleDeposit = async () => {
     const depositAmount = parseFloat(amount);
-    
-    if (!depositAmount || depositAmount <= 0) {
-      alert('Vui lòng nhập số tiền hợp lệ');
-      return;
-    }
 
-    if (depositAmount < 10) {
+    if (!depositAmount || depositAmount < 10) {
       alert('Số tiền nạp tối thiểu là $10');
-      return;
-    }
-
-    if (depositAmount > 10000) {
-      alert('Số tiền nạp tối đa là $10,000');
       return;
     }
 
     try {
       setProcessing(true);
-      
-      const response = await buyerService.deposit({
-        amount: depositAmount,
-        returnUrl: window.location.origin + '/buyer/wallet'
-      });
 
-      if (response.success && response.data.paymentUrl) {
-        // Redirect to payment gateway
-        window.location.href = response.data.paymentUrl;
-      } else {
-        alert('Nạp tiền thành công! Số dư đã được cập nhật.');
-        navigate('/buyer/wallet');
+      const result = await buyerService.depositWithVNPay(depositAmount);
+
+      // console.log('VNPAY URL:', result.paymentUrl);
+      // DelayNode.delay(10000, () => { })
+      // result giờ là { paymentUrl, transactionId }
+      if (result?.paymentUrl) {
+        console.log('Redirecting to VNPay:', result.paymentUrl); // để check
+        window.location.href = result.paymentUrl;
       }
     } catch (error) {
-      console.error('Error depositing:', error);
-      alert('Không thể nạp tiền. Vui lòng thử lại sau.');
+      console.error('Lỗi nạp tiền:', error);
+      alert(error.message || 'Không thể tạo link thanh toán. Vui lòng thử lại!');
     } finally {
       setProcessing(false);
     }
@@ -110,11 +102,10 @@ export default function Deposit() {
               <button
                 key={value}
                 onClick={() => handleQuickAmount(value)}
-                className={`p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 transform ${
-                  amount === value.toString()
-                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
-                    : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 text-gray-900 dark:text-white'
-                }`}
+                className={`p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 transform ${amount === value.toString()
+                  ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 text-gray-900 dark:text-white'
+                  }`}
               >
                 <div className="text-2xl font-bold">${value}</div>
               </button>
@@ -155,11 +146,10 @@ export default function Deposit() {
                 <button
                   key={method.id}
                   onClick={() => setSelectedMethod(method.id)}
-                  className={`w-full p-4 rounded-lg border-2 transition-all duration-300 hover:scale-102 transform ${
-                    selectedMethod === method.id
-                      ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/30'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500'
-                  }`}
+                  className={`w-full p-4 rounded-lg border-2 transition-all duration-300 hover:scale-102 transform ${selectedMethod === method.id
+                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/30'
+                    : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500'
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
