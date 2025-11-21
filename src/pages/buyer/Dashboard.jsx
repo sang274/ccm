@@ -75,7 +75,7 @@ export const BuyerDashboard = () => {
       icon: <Gavel className="h-8 w-8 text-white" />,
       count: `${stats.auctions} đang mở`,
       bg: 'bg-gradient-to-br from-orange-500 to-amber-600',
-      link: '/market/auctions', // Link tới Auctions.jsx
+      link: '/buyer/auctions', // Link tới Auctions.jsx
       textColor: 'text-orange-100'
     },
     {
@@ -93,7 +93,7 @@ export const BuyerDashboard = () => {
       icon: <History className="h-8 w-8 text-white" />,
       count: `${stats.transactions} giao dịch`,
       bg: 'bg-gradient-to-br from-emerald-500 to-green-600',
-      link: '/buyer/my-purchases', // Link tới trang lịch sử
+      link: '/buyer/purchase-history', // Link tới trang lịch sử
       textColor: 'text-green-100'
     }
   ];

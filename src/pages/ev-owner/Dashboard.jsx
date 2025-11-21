@@ -55,67 +55,67 @@ export const EVOwnerDashboard = () => {
     <Layout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-2">Chào mừng trở lại, {user?.fullName || user?.email}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">Chào mừng trở lại, {user?.fullName || user?.email}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-emerald-500 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-emerald-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Số xe điện</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{vehicles.length}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Số xe điện</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{vehicles.length}</p>
               </div>
-              <div className="bg-emerald-100 p-3 rounded-full">
-                <Car className="h-8 w-8 text-emerald-600" />
+              <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full">
+                <Car className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Tín chỉ Carbon</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{totalCredits.toFixed(2)}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tín chỉ Carbon</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{totalCredits.toFixed(2)}</p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-full">
-                <Leaf className="h-8 w-8 text-blue-600" />
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                <Leaf className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Số dư ví</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">${totalRevenue.toFixed(2)}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Số dư ví</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">${totalRevenue.toFixed(2)}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <DollarSign className="h-8 w-8 text-green-600" />
+              <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+                <DollarSign className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-amber-500 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-amber-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Tín chỉ đã bán</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{credits.filter(c => c.status === 4).length}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tín chỉ đã bán</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{credits.filter(c => c.status === 4).length}</p>
               </div>
-              <div className="bg-amber-100 p-3 rounded-full">
-                <TrendingUp className="h-8 w-8 text-amber-600" />
+              <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full">
+                <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Xe của tôi</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Xe của tôi</h2>
             {vehicles.length === 0 ? (
               <div className="text-center py-8">
-                <Car className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">Chưa có xe nào được đăng ký</p>
+                <Car className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400 mb-4">Chưa có xe nào được đăng ký</p>
                 <Link
                   to="/ev-owner/vehicles"
                   className="inline-block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -126,20 +126,20 @@ export const EVOwnerDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {vehicles.slice(0, 3).map((vehicle) => (
-                  <div key={vehicle.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={vehicle.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="bg-emerald-100 p-2 rounded-lg">
-                        <Car className="h-5 w-5 text-emerald-600" />
+                      <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg">
+                        <Car className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{vehicle.make} {vehicle.model}</p>
-                        <p className="text-sm text-gray-500">{vehicle.year} - {vehicle.vin}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">{vehicle.make} {vehicle.model}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{vehicle.year} - {vehicle.vin}</p>
                       </div>
                     </div>
                   </div>
                 ))}
                 {vehicles.length > 3 && (
-                  <Link to="/ev-owner/vehicles" className="block text-center text-emerald-600 hover:text-emerald-700 font-medium mt-4">
+                  <Link to="/ev-owner/vehicles" className="block text-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium mt-4">
                     Xem tất cả ({vehicles.length} xe)
                   </Link>
                 )}
@@ -147,12 +147,12 @@ export const EVOwnerDashboard = () => {
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Tín chỉ Carbon gần đây</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tín chỉ Carbon gần đây</h2>
             {credits.length === 0 ? (
               <div className="text-center py-8">
-                <Leaf className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">Chưa có tín chỉ nào</p>
+                <Leaf className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400 mb-4">Chưa có tín chỉ nào</p>
                 <Link
                   to="/ev-owner/trips"
                   className="inline-block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -163,14 +163,14 @@ export const EVOwnerDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {credits.slice(0, 3).map((credit) => (
-                  <div key={credit.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={credit.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <Leaf className="h-5 w-5 text-blue-600" />
+                      <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg">
+                        <Leaf className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{credit.availableUnits.toFixed(2)} tín chỉ</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="font-medium text-gray-900 dark:text-white">{credit.availableUnits.toFixed(2)} tín chỉ</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {credit.status === 0 && 'Chờ xác minh'}
                           {credit.status === 1 && 'Đã phát hành'}
                           {credit.status === 2 && 'Đang niêm yết'}
@@ -181,7 +181,7 @@ export const EVOwnerDashboard = () => {
                   </div>
                 ))}
                 {credits.length > 3 && (
-                  <Link to="/ev-owner/carbon-credits" className="block text-center text-emerald-600 hover:text-emerald-700 font-medium mt-4">
+                  <Link to="/ev-owner/carbon-credits" className="block text-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium mt-4">
                     Xem tất cả
                   </Link>
                 )}
