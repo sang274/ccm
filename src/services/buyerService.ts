@@ -1,3 +1,5 @@
+// src/services/buyerService.ts
+import { Wallet } from '../types';
 import { apiClient } from './api';
 
 export interface CreditSearchParams {
@@ -101,5 +103,31 @@ export const buyerService = {
   handlePaymentCallback: async (params: URLSearchParams) => {
     const response = await apiClient.get(`/buyer/payment/callback?${params.toString()}`);
     return response.data;
-  }
+  },
+
+  // src/services/buyerService.ts
+
+  depositWithVNPay: async (amount: number) => {
+    const returnUrl = `${window.location.origin}/buyer/wallet/callback`;
+    const response = await apiClient.post('/buyer/deposit', {
+      amount,
+      returnUrl,
+    });
+
+    // Dùng any để bỏ qua kiểm tra kiểu tạm thời
+    const resData: any = response.data;
+
+    if (resData?.success && resData?.data?.paymentUrl) {
+      return resData.data as { paymentUrl: string; transactionId: string };
+    }
+
+    throw new Error(resData?.message || 'Không nhận được link thanh toán');
+  },
+
+  // Dùng trong trang callback để frontend hiển thị kết quả
+  getMyWallet: async () => {
+    const response = await apiClient.get<Wallet>('/wallet/me');
+    return response.data;
+  },
+
 };

@@ -1,3 +1,4 @@
+//src/services/walletService.ts
 import { apiClient } from './api';
 import { Wallet, WalletTransaction } from '../types';
 
@@ -12,8 +13,8 @@ export const walletService = {
     return response.data;
   },
 
-  async getByUserId(userId: string) {
-    const response = await apiClient.get<Wallet>(`/wallet/${userId}`);
+  async getByUserId() {
+    const response = await apiClient.get<Wallet>(`/wallet/me`);
     return response.data;
   },
 
@@ -42,5 +43,14 @@ export const walletTransactionService = {
   async getByWalletId(walletId: string) {
     const response = await apiClient.get<WalletTransaction[]>(`/wallet-transaction/wallet/${walletId}`);
     return response.data;
+  },
+
+  async getMyWallet() {
+    const response = await apiClient.get<{
+      success: boolean;
+      data: Wallet
+    }>('/api/wallet/me');
+
+    return response.data.data; // ← trả về đúng object Wallet
   },
 };
