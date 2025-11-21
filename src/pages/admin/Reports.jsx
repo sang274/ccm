@@ -1,3 +1,4 @@
+// src/pages/admin/Reports.jsx
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
 import { FileText, Download, Calendar, TrendingUp, DollarSign, Users, Package, BarChart3 } from 'lucide-react';
@@ -58,7 +59,7 @@ export const Reports = () => {
         params: { ...dateRange, format },
         responseType: 'blob'
       });
-      
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -82,14 +83,14 @@ export const Reports = () => {
             <p className="text-gray-600 mt-1">Thống kê và phân tích giao dịch tín chỉ carbon</p>
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => handleExportReport('pdf')}
               className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
             >
               <Download className="h-5 w-5" />
               PDF
             </button>
-            <button 
+            <button
               onClick={() => handleExportReport('xlsx')}
               className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
             >

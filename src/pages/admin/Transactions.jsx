@@ -1,30 +1,31 @@
+// src/pages/admin/Transactions.jsx
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
-import { DollarSign, Search, Filter, CheckCircle, XCircle, Clock, AlertTriangle, Eye, Download } from 'lucide-react';
+import { DollarSign, Search, Filter, CheckCircle, XCircle, Clock, AlertTriangle, Eye, Download, RefreshCw } from 'lucide-react';
 import { apiClient } from '../../services/api';
 
 const STATUS_LABELS = {
-  0: 'Chờ xử lý',
-  1: 'Đã xác nhận',
-  2: 'Đã hoàn thành',
-  3: 'Đã hủy',
-  4: 'Tranh chấp'
+  Pending: 'Chờ xử lý',
+  Confirmed: 'Đã xác nhận',
+  Completed: 'Đã hoàn thành',
+  Cancelled: 'Đã hủy',
+  Disputed: 'Tranh chấp'
 };
 
 const STATUS_COLORS = {
-  0: 'bg-yellow-100 text-yellow-800',
-  1: 'bg-blue-100 text-blue-800',
-  2: 'bg-green-100 text-green-800',
-  3: 'bg-red-100 text-red-800',
-  4: 'bg-orange-100 text-orange-800'
+  Pending: 'bg-yellow-100 text-yellow-800',
+  Confirmed: 'bg-blue-100 text-blue-800',
+  Completed: 'bg-green-100 text-green-800',
+  Cancelled: 'bg-red-100 text-red-800',
+  Disputed: 'bg-orange-100 text-orange-800'
 };
 
 const STATUS_ICONS = {
-  0: Clock,
-  1: CheckCircle,
-  2: CheckCircle,
-  3: XCircle,
-  4: AlertTriangle
+  Pending: Clock,
+  Confirmed: CheckCircle,
+  Completed: CheckCircle,
+  Cancelled: XCircle,
+  Disputed: AlertTriangle
 };
 
 export const Transactions = () => {
@@ -35,59 +36,75 @@ export const Transactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (pageNum = 1) => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/admin/transactions');
-      if (response.data.success) {
-        setTransactions(response.data.data || []);
-      }
+      const response = await apiClient.get('/admin/transactions', {
+        params: { page: pageNum, pageSize }
+      });
+
+      const result = response.data; // API trả về PaginatedResult<TransactionDto>
+      setTransactions(result.items || []);
+      setTotalPages(result.totalPages || 1);
+      setTotalResults(result.totalResults || 0);
+      setPage(pageNum);
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      // Mock data for demo
-      setTransactions([
-        {
-          id: '1',
-          buyerEmail: 'buyer@example.com',
-          sellerEmail: 'seller@example.com',
-          amount: 1500.00,
-          units: 50,
-          status: 0,
-          createdAt: new Date().toISOString(),
-          type: 'purchase'
-        }
-      ]);
+      alert('Không thể tải danh sách giao dịch');
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStatusChange = async (transactionId, newStatus) => {
+  useEffect(() => {
+    fetchTransactions(1);
+  }, []);
+
+  // Confirm transaction
+  const confirmTransaction = async (id) => {
     try {
-      await apiClient.put(`/admin/transactions/${transactionId}/status`, { status: newStatus });
-      fetchTransactions();
-      setShowModal(false);
+      await apiClient.put(`/admin/transactions/${id}/confirm`);
+      alert('Giao dịch đã được xác nhận');
+      fetchTransactions(page);
     } catch (error) {
-      console.error('Error updating transaction:', error);
+      alert('Xác nhận thất bại');
+    }
+  };
+
+  // Cancel transaction
+  const cancelTransaction = async (id) => {
+    try {
+      await apiClient.put(`/admin/transactions/${id}/cancel`);
+      alert('Giao dịch đã bị hủy');
+      fetchTransactions(page);
+    } catch (error) {
+      alert('Hủy giao dịch thất bại');
     }
   };
 
   const filteredTransactions = transactions.filter(tx => {
-    const matchesSearch = tx.buyerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         tx.sellerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         tx.id?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || tx.status === parseInt(filterStatus);
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch =
+      tx.id?.toString().includes(searchLower) ||
+      tx.buyerEmail?.toLowerCase().includes(searchLower) ||
+      tx.sellerEmail?.toLowerCase().includes(searchLower);
+
+    const matchesStatus = filterStatus === 'all' || tx.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
+  // Tính toán stats
   const totalAmount = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
-  const completedAmount = transactions.filter(tx => tx.status === 2).reduce((sum, tx) => sum + (tx.amount || 0), 0);
-  const pendingCount = transactions.filter(tx => tx.status === 0).length;
-  const disputeCount = transactions.filter(tx => tx.status === 4).length;
+  const completedAmount = transactions.filter(tx => tx.status === 'Completed').reduce((sum, tx) => sum + tx.amount, 0);
+  const pendingCount = transactions.filter(tx => tx.status === 'Pending').length;
+  const disputeCount = transactions.filter(tx => tx.status === 'Disputed').length;
 
   return (
     <Layout>
@@ -96,268 +113,267 @@ export const Transactions = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Quản lý giao dịch</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Theo dõi và xử lý tất cả giao dịch</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Theo dõi và xử lý tất cả giao dịch trên nền tảng</p>
           </div>
-          <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-            <Download className="h-5 w-5" />
-            Xuất báo cáo
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => fetchTransactions(page)}
+              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Làm mới
+            </button>
+            <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
+              <Download className="h-5 w-5" />
+              Xuất báo cáo
+            </button>
+          </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <DollarSign className="h-6 w-6 text-blue-600" />
-              </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Tổng giao dịch</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Tổng giá trị</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalAmount.toFixed(2)}</p>
               </div>
+              <DollarSign className="h-8 w-8 text-blue-600" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Đã hoàn thành</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">${completedAmount.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-green-600">${completedAmount.toFixed(2)}</p>
               </div>
+              <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-lg">
-                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Chờ xử lý</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingCount}</p>
+                <p className="text-2xl font-bold text-yellow-600">{pendingCount}</p>
               </div>
+              <Clock className="h-8 w-8 text-yellow-600" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg">
-                <AlertTriangle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-              </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Tranh chấp</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{disputeCount}</p>
+                <p className="text-2xl font-bold text-orange-600">{disputeCount}</p>
               </div>
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 transition-colors">
+        {/* Filters + Search */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Tìm kiếm theo ID, email..."
+                placeholder="Tìm kiếm theo ID, email người mua/bán..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-              >
-                <option value="all">Tất cả trạng thái</option>
-                <option value="0">Chờ xử lý</option>
-                <option value="1">Đã xác nhận</option>
-                <option value="2">Đã hoàn thành</option>
-                <option value="3">Đã hủy</option>
-                <option value="4">Tranh chấp</option>
-              </select>
-            </div>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">Tất cả trạng thái</option>
+              <option value="Pending">Chờ xử lý</option>
+              <option value="Confirmed">Đã xác nhận</option>
+              <option value="Completed">Đã hoàn thành</option>
+              <option value="Cancelled">Đã hủy</option>
+              <option value="Disputed">Tranh chấp</option>
+            </select>
           </div>
         </div>
 
-        {/* Transactions Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden transition-colors">
+        {/* Table */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center">
+            <div className="p-12 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">Đang tải...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">Đang tải giao dịch...</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 transition-colors">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Người mua
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Người bán
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Số lượng
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá trị
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Trạng thái
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Ngày tạo
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Thao tác
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
-                  {filteredTransactions.map((tx) => {
-                    const StatusIcon = STATUS_ICONS[tx.status];
-                    return (
-                      <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                          #{tx.id}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                          {tx.buyerEmail}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                          {tx.sellerEmail}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {tx.units} tín chỉ
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                          ${tx.amount.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full ${STATUS_COLORS[tx.status]}`}>
-                            <StatusIcon className="h-3 w-3" />
-                            {STATUS_LABELS[tx.status]}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(tx.createdAt).toLocaleDateString('vi-VN')}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button 
-                            onClick={() => {
-                              setSelectedTransaction(tx);
-                              setShowModal(true);
-                            }}
-                            className="text-emerald-600 hover:text-emerald-900"
-                          >
-                            <Eye className="h-5 w-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {filteredTransactions.length === 0 && (
-                <div className="text-center py-12">
-                  <DollarSign className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Không có giao dịch</h3>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Không tìm thấy giao dịch nào phù hợp.</p>
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Người mua</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Người bán</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Số lượng</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Giá trị</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Trạng thái</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ngày tạo</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {filteredTransactions.map((tx) => {
+                      const StatusIcon = STATUS_ICONS[tx.status];
+                      return (
+                        <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                          <td className="px-6 py-4 text-sm font-medium">#{tx.id.slice(0, 8)}</td>
+                          <td className="px-6 py-4 text-sm">{tx.buyerEmail}</td>
+                          <td className="px-6 py-4 text-sm">{tx.sellerEmail}</td>
+                          <td className="px-6 py-4 text-sm">{tx.units} tín chỉ</td>
+                          <td className="px-6 py-4 text-sm font-medium">${tx.amount?.toFixed(2)}</td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[tx.status]}`}>
+                              <StatusIcon className="h-3 w-3" />
+                              {STATUS_LABELS[tx.status]}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-500">
+                            {new Date(tx.createdAt).toLocaleDateString('vi-VN')}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button
+                              onClick={() => {
+                                setSelectedTransaction(tx);
+                                setShowModal(true);
+                              }}
+                              className="text-emerald-600 hover:text-emerald-800"
+                            >
+                              <Eye className="h-5 w-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="bg-gray-50 dark:bg-gray-700 px-6 py-3 flex items-center justify-between">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Hiển thị {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, totalResults)} của {totalResults}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => fetchTransactions(page - 1)}
+                      disabled={page === 1}
+                      className="px-3 py-1 border rounded disabled:opacity-50"
+                    >
+                      Trước
+                    </button>
+                    <span className="px-3 py-1">Trang {page}/{totalPages}</span>
+                    <button
+                      onClick={() => fetchTransactions(page + 1)}
+                      disabled={page === totalPages}
+                      className="px-3 py-1 border rounded disabled:opacity-50"
+                    >
+                      Sau
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
 
-        {/* Transaction Detail Modal */}
+        {/* Modal chi tiết */}
         {showModal && selectedTransaction && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-colors">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Chi tiết giao dịch #{selectedTransaction.id}</h2>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b dark:border-gray-700">
+                <h2 className="text-2xl font-bold">Chi tiết giao dịch</h2>
+                <p className="text-sm text-gray-500">ID: {selectedTransaction.id}</p>
               </div>
-              <div className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Người mua</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.buyerEmail}</p>
+                    <p className="font-medium">{selectedTransaction.buyerEmail}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Người bán</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.sellerEmail}</p>
+                    <p className="font-medium">{selectedTransaction.sellerEmail}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Số lượng</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedTransaction.units} tín chỉ</p>
+                    <p className="font-medium">{selectedTransaction.units} tín chỉ</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Giá trị</p>
-                    <p className="font-medium text-gray-900 dark:text-white">${selectedTransaction.amount.toFixed(2)}</p>
+                    <p className="font-medium text-emerald-600">${selectedTransaction.amount?.toFixed(2)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Trạng thái</p>
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${STATUS_COLORS[selectedTransaction.status]}`}>
+                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[selectedTransaction.status]}`}>
+                      {(() => {
+                        const StatusIcon = STATUS_ICONS[selectedTransaction.status];
+                        return StatusIcon ? <StatusIcon className="h-4 w-4" /> : null;
+                      })()}
                       {STATUS_LABELS[selectedTransaction.status]}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{new Date(selectedTransaction.createdAt).toLocaleString('vi-VN')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Thời gian</p>
+                    <p className="font-medium">{new Date(selectedTransaction.createdAt).toLocaleString('vi-VN')}</p>
                   </div>
                 </div>
 
-                {selectedTransaction.status === 0 && (
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">Thao tác</p>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => handleStatusChange(selectedTransaction.id, 1)}
-                        className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        Xác nhận
-                      </button>
-                      <button
-                        onClick={() => handleStatusChange(selectedTransaction.id, 3)}
-                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        Hủy
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {selectedTransaction.status === 4 && (
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">Xử lý tranh chấp</p>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => handleStatusChange(selectedTransaction.id, 2)}
-                        className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        Hoàn thành
-                      </button>
-                      <button
-                        onClick={() => handleStatusChange(selectedTransaction.id, 3)}
-                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        Hủy giao dịch
-                      </button>
+                {/* Hành động cho admin */}
+                {(selectedTransaction.status === 'Pending' || selectedTransaction.status === 'Disputed') && (
+                  <div className="pt-6 border-t dark:border-gray-700">
+                    <p className="font-medium mb-4">Hành động của Admin</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedTransaction.status === 'Pending' && (
+                        <>
+                          <button
+                            onClick={() => confirmTransaction(selectedTransaction.id)}
+                            className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+                          >
+                            Xác nhận giao dịch
+                          </button>
+                          <button
+                            onClick={() => cancelTransaction(selectedTransaction.id)}
+                            className="bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition"
+                          >
+                            Hủy giao dịch
+                          </button>
+                        </>
+                      )}
+                      {selectedTransaction.status === 'Disputed' && (
+                        <>
+                          <button
+                            onClick={() => confirmTransaction(selectedTransaction.id)}
+                            className="bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+                          >
+                            Giải quyết tranh chấp (Hoàn thành)
+                          </button>
+                          <button
+                            onClick={() => cancelTransaction(selectedTransaction.id)}
+                            className="bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition"
+                          >
+                            Hủy giao dịch
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
-              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+              <div className="p-6 border-t dark:border-gray-700 flex justify-end">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Đóng
                 </button>
