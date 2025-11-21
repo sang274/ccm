@@ -1,15 +1,26 @@
+//src/pages/ev-owner/Wallet.jsx
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
 import { Wallet as WalletIcon, Leaf, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
 import { evOwnerService } from '../../services/evOwnerService';
 
 export default function EVOwnerWallet() {
-  const [wallet, setWallet] = useState(null);
+  const [wallet, setWallet] = useState({
+    fiatBalance: 0,
+    carbonBalance: 0,
+    balance: 0,
+    totalEarned: 0,
+    totalSold: 0,
+    pendingCredits: 0
+  });
   const [loading, setLoading] = useState(true);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [bankAccount, setBankAccount] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
+  const [bankName, setBankName] = useState('');
 
   useEffect(() => {
     loadWallet();
@@ -19,20 +30,32 @@ export default function EVOwnerWallet() {
     try {
       setLoading(true);
       const response = await evOwnerService.getWallet();
-      setWallet(response.data || {
-        balance: 150.75,
-        totalEarned: 500,
+
+      // SỬA DÒNG NÀY – CHỈ LẤY PHẦN data.data
+      const walletData = response.data?.data || response.data; // fallback nếu backend đổi cấu trúc
+
+      setWallet({
+        fiatBalance: walletData.fiatBalance || 0,
+        carbonBalance: walletData.carbonBalance || 0,
+        currency: walletData.currency || 'USD',
+        updatedAt: walletData.updatedAt,
+        // Các field cũ bạn đang dùng để hiển thị (tạm hardcode hoặc tính sau)
+        balance: walletData.fiatBalance || 0,           // USD có thể rút
+        totalEarned: 500,                               // sẽ lấy từ report sau
         totalSold: 349.25,
-        pendingCredits: 25
+        pendingCredits: walletData.carbonBalance || 0   // tạm dùng carbonBalance làm pending
       });
+
     } catch (error) {
       console.error('Error loading wallet:', error);
-      // Mock data
+      // Nếu lỗi → vẫn show mock để không crash
       setWallet({
         balance: 150.75,
         totalEarned: 500,
         totalSold: 349.25,
-        pendingCredits: 25
+        pendingCredits: 25,
+        fiatBalance: 150.75,
+        carbonBalance: 25
       });
     } finally {
       setLoading(false);
@@ -41,48 +64,37 @@ export default function EVOwnerWallet() {
 
   const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
-    
-    if (!amount || amount <= 0) {
-      alert('Vui lòng nhập số tiền hợp lệ');
+
+    if (!amount || amount <= 0 || amount > wallet.fiatBalance) {
+      alert("Số tiền không hợp lệ hoặc vượt quá số dư");
       return;
     }
-
-    if (amount > wallet.balance) {
-      alert('Số dư không đủ');
+    if (!bankAccount.trim()) {
+      alert("Vui lòng nhập số tài khoản");
       return;
     }
-
-    if (!bankAccount) {
-      alert('Vui lòng nhập số tài khoản ngân hàng');
+    if (!bankName.trim()) {
+      alert("Vui lòng nhập tên ngân hàng");
       return;
     }
 
     try {
       setWithdrawing(true);
-      await evOwnerService.withdrawFunds(amount, bankAccount);
-      alert('Yêu cầu rút tiền thành công! Tiền sẽ được chuyển trong 1-3 ngày làm việc.');
+      await evOwnerService.withdrawFunds(amount, bankAccount.trim(), bankName.trim());
+
+      alert("Gửi yêu cầu rút tiền thành công!\nSố tiền sẽ được chuyển trong 1-3 ngày làm việc.");
       setShowWithdrawModal(false);
       setWithdrawAmount('');
       setBankAccount('');
-      loadWallet();
-    } catch (error) {
-      console.error('Error withdrawing:', error);
-      alert('Không thể rút tiền. Vui lòng thử lại sau.');
+      setBankName('');
+      loadWallet(); // reload số dư mới
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.errors?.[0] || "Rút tiền thất bại. Vui lòng thử lại.");
     } finally {
       setWithdrawing(false);
     }
   };
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Đang tải...</p>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -207,7 +219,7 @@ export default function EVOwnerWallet() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 animate-fadeInScale">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Rút tiền</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -221,7 +233,7 @@ export default function EVOwnerWallet() {
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Số dư khả dụng: ${(wallet.balance * 25).toFixed(2)}
+                    Số dư khả dụng: ${(wallet.balance).toFixed(2)}
                   </p>
                 </div>
 
@@ -235,6 +247,19 @@ export default function EVOwnerWallet() {
                     onChange={(e) => setBankAccount(e.target.value)}
                     placeholder="Nhập số tài khoản"
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Tên ngân hàng
+                  </label>
+                  <input
+                    type="text"
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    placeholder="Vietcombank, Techcombank, BIDV, MB Bank..."
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
                   />
                 </div>
               </div>

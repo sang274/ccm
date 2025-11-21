@@ -1,3 +1,4 @@
+//src/services/evOwnerService.ts
 import { apiClient } from './api';
 
 export interface Trip {
@@ -178,8 +179,8 @@ export const evOwnerService = {
   },
 
   // Withdraw funds
-  withdrawFunds: async (amount: number, bankAccount: string) => {
-    const response = await apiClient.post('/evowner/wallet/withdraw', { amount, bankAccount });
+  withdrawFunds: async (amount: number, bankAccount: string, bankName: string) => {
+    const response = await apiClient.post('/evowner/withdraw', { amount, bankAccount, bankName });
     return response.data;
   },
 
