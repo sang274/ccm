@@ -113,9 +113,9 @@ export const evOwnerService = {
     return response.data;
   },
 
-  // Get all vehicles
+  // Get current user's vehicles
   getVehicles: async () => {
-    const response = await apiClient.get('/vehicle');
+    const response = await apiClient.get('/vehicle/my-vehicles');
     return response.data;
   },
 
@@ -226,11 +226,7 @@ export const evOwnerService = {
     formData.append('file', file);
     formData.append('vehicleId', vehicleId);
     if (source) formData.append('source', source);
-    const response = await apiClient.post('/trip-imports', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post('/trip-imports', formData);
     return response.data;
   }
 };
