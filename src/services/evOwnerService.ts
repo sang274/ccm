@@ -3,14 +3,25 @@ import { apiClient } from './api';
 
 export interface Trip {
   id: string;
+  importId?: string;
+  userId: string;
   vehicleId: string;
-  startLocation: string;
-  endLocation: string;
-  distance: number;
-  startTime: string;
-  endTime: string;
-  co2Reduced: number;
-  status: string;
+  startTime?: string;
+  endTime?: string;
+  distanceKm?: number;
+  energyUsedKWh?: number;
+  routeGeo?: any;
+  createdAt: string;
+}
+
+export interface TripImport {
+  id: string;
+  userId: string;
+  vehicleId: string;
+  source?: string;
+  rawFilePath?: string;
+  importedAt: string;
+  metadata?: any;
 }
 
 export interface EmissionCalculation {
@@ -187,6 +198,39 @@ export const evOwnerService = {
   // Get personal report
   getReport: async () => {
     const response = await apiClient.get('/evowner/report');
+    return response.data;
+  },
+
+  // Get all trips
+  getTrips: async () => {
+    const response = await apiClient.get('/trips');
+    return response.data;
+  },
+
+  // Create a new trip
+  createTrip: async (tripData: {
+    vehicleId: string;
+    startTime?: string;
+    endTime?: string;
+    distanceKm?: number;
+    energyUsedKWh?: number;
+    routeGeo?: any;
+  }) => {
+    const response = await apiClient.post('/trips', tripData);
+    return response.data;
+  },
+
+  // Import trips from file
+  importTripsFromFile: async (file: File, vehicleId: string, source?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('vehicleId', vehicleId);
+    if (source) formData.append('source', source);
+    const response = await apiClient.post('/trip-imports', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   }
 };
