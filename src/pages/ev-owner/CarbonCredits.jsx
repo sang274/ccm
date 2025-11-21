@@ -1,3 +1,4 @@
+//src/pages/ev-owner/CarbonCredits.jsx
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
 import { Calculator, Package, TrendingUp, CheckCircle, Plus, DollarSign, Gavel, X } from 'lucide-react';
@@ -8,14 +9,14 @@ export default function CarbonCredits() {
   const [activeTab, setActiveTab] = useState('calculate');
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Calculate tab state
   const [carbonCredits, setCarbonCredits] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [totalUnits, setTotalUnits] = useState('');
   const [metadata, setMetadata] = useState('');
   const [creating, setCreating] = useState(false);
-  
+
   // Listings tab state
   const [listings, setListings] = useState([]);
   const [showCreateListing, setShowCreateListing] = useState(false);
@@ -29,7 +30,7 @@ export default function CarbonCredits() {
     startingBid: ''
   });
   const [creatingListing, setCreatingListing] = useState(false);
-  
+
   // Transactions tab state
   const [transactions, setTransactions] = useState([]);
 
@@ -46,7 +47,7 @@ export default function CarbonCredits() {
         evOwnerService.getListings(),
         evOwnerService.getTransactions()
       ]);
-      
+
       setWallet(walletData.data || { balance: 150.75, totalEarned: 500, totalSold: 349.25, pendingCredits: 25 });
       setCarbonCredits(creditsData.data || []);
       setListings(listingsData.data || []);
@@ -136,112 +137,109 @@ export default function CarbonCredits() {
             <p className="text-gray-600 dark:text-gray-300 mt-1">Quản lý và giao dịch tín chỉ carbon</p>
           </div>
 
-        {/* Wallet Summary */}
-        {wallet && (
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white animate-fadeInUp animation-delay-100">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Số dư hiện tại</p>
-                <p className="text-3xl font-bold">{wallet.balance.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Tổng kiếm được</p>
-                <p className="text-2xl font-bold">{wallet.totalEarned.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Đã bán</p>
-                <p className="text-2xl font-bold">{wallet.totalSold.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Đang chờ</p>
-                <p className="text-2xl font-bold">{wallet.pendingCredits}</p>
-                <p className="text-emerald-100 text-xs mt-1">tín chỉ</p>
+          {/* Wallet Summary */}
+          {wallet && (
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white animate-fadeInUp animation-delay-100">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Số dư hiện tại</p>
+                  <p className="text-3xl font-bold">{wallet.balance.toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Tổng kiếm được</p>
+                  <p className="text-2xl font-bold">{wallet.totalEarned.toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Đã bán</p>
+                  <p className="text-2xl font-bold">{wallet.totalSold.toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Đang chờ</p>
+                  <p className="text-2xl font-bold">{wallet.pendingCredits}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tín chỉ</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fadeInUp animation-delay-200">
-          <div className="flex border-b border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setActiveTab('calculate')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'calculate'
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <Calculator className="inline h-5 w-5 mr-2" />
-              Tính toán CO₂
-            </button>
-            <button
-              onClick={() => setActiveTab('listings')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'listings'
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <Package className="inline h-5 w-5 mr-2" />
-              Niêm yết ({listings.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('transactions')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'transactions'
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <TrendingUp className="inline h-5 w-5 mr-2" />
-              Giao dịch ({transactions.length})
-            </button>
-          </div>
+          {/* Tabs */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fadeInUp animation-delay-200">
+            <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setActiveTab('calculate')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'calculate'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+              >
+                <Calculator className="inline h-5 w-5 mr-2" />
+                Tính toán CO₂
+              </button>
+              <button
+                onClick={() => setActiveTab('listings')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'listings'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+              >
+                <Package className="inline h-5 w-5 mr-2" />
+                Niêm yết ({listings.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('transactions')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'transactions'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+              >
+                <TrendingUp className="inline h-5 w-5 mr-2" />
+                Giao dịch ({transactions.length})
+              </button>
+            </div>
 
-          {/* Tab Content */}
-          <div className="p-6">
-            {/* Calculate Tab */}
-            {activeTab === 'calculate' && (
-              <CarbonCreditsTab
-                carbonCredits={carbonCredits}
-                showCreateModal={showCreateModal}
-                setShowCreateModal={setShowCreateModal}
-                totalUnits={totalUnits}
-                setTotalUnits={setTotalUnits}
-                metadata={metadata}
-                setMetadata={setMetadata}
-                creating={creating}
-                handleCreateCredit={handleCreateCredit}
-              />
-            )}
+            {/* Tab Content */}
+            <div className="p-6">
+              {/* Calculate Tab */}
+              {activeTab === 'calculate' && (
+                <CarbonCreditsTab
+                  carbonCredits={carbonCredits}
+                  showCreateModal={showCreateModal}
+                  setShowCreateModal={setShowCreateModal}
+                  totalUnits={totalUnits}
+                  setTotalUnits={setTotalUnits}
+                  metadata={metadata}
+                  setMetadata={setMetadata}
+                  creating={creating}
+                  handleCreateCredit={handleCreateCredit}
+                />
+              )}
 
-            {/* Listings Tab */}
-            {activeTab === 'listings' && (
-              <ListingsTabContent
-                listings={listings}
-                showCreateListing={showCreateListing}
-                setShowCreateListing={setShowCreateListing}
-                listingFormData={listingFormData}
-                setListingFormData={setListingFormData}
-                creatingListing={creatingListing}
-                handleCreateListing={handleCreateListing}
-              />
-            )}
+              {/* Listings Tab */}
+              {activeTab === 'listings' && (
+                <ListingsTabContent
+                  listings={listings}
+                  showCreateListing={showCreateListing}
+                  setShowCreateListing={setShowCreateListing}
+                  listingFormData={listingFormData}
+                  setListingFormData={setListingFormData}
+                  creatingListing={creatingListing}
+                  handleCreateListing={handleCreateListing}
+                />
+              )}
 
-            {/* Transactions Tab */}
-            {activeTab === 'transactions' && (
-              <TransactionsTab
-                transactions={transactions}
-                loadData={loadData}
-              />
-            )}
+              {/* Transactions Tab */}
+              {activeTab === 'transactions' && (
+                <TransactionsTab
+                  transactions={transactions}
+                  loadData={loadData}
+                />
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </Layout>
 
       {/* Modals - Rendered outside Layout */}
@@ -249,7 +247,7 @@ export default function CarbonCredits() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 animate-fadeInScale">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tạo tín chỉ Carbon</h2>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -313,7 +311,7 @@ export default function CarbonCredits() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loại niêm yết</label>
                 <select
                   value={listingFormData.listingType}
-                  onChange={(e) => setListingFormData({...listingFormData, listingType: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, listingType: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="fixed">Giá cố định</option>
@@ -326,7 +324,7 @@ export default function CarbonCredits() {
                 <input
                   type="number"
                   value={listingFormData.quantity}
-                  onChange={(e) => setListingFormData({...listingFormData, quantity: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, quantity: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
@@ -337,7 +335,7 @@ export default function CarbonCredits() {
                   <input
                     type="number"
                     value={listingFormData.pricePerUnit}
-                    onChange={(e) => setListingFormData({...listingFormData, pricePerUnit: e.target.value})}
+                    onChange={(e) => setListingFormData({ ...listingFormData, pricePerUnit: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -348,7 +346,7 @@ export default function CarbonCredits() {
                     <input
                       type="number"
                       value={listingFormData.startingBid}
-                      onChange={(e) => setListingFormData({...listingFormData, startingBid: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, startingBid: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -357,7 +355,7 @@ export default function CarbonCredits() {
                     <input
                       type="number"
                       value={listingFormData.minBidIncrement}
-                      onChange={(e) => setListingFormData({...listingFormData, minBidIncrement: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, minBidIncrement: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -366,7 +364,7 @@ export default function CarbonCredits() {
                     <input
                       type="datetime-local"
                       value={listingFormData.auctionEndTime}
-                      onChange={(e) => setListingFormData({...listingFormData, auctionEndTime: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, auctionEndTime: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -377,7 +375,7 @@ export default function CarbonCredits() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mô tả</label>
                 <textarea
                   value={listingFormData.description}
-                  onChange={(e) => setListingFormData({...listingFormData, description: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, description: e.target.value })}
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />

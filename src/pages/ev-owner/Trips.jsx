@@ -1,7 +1,10 @@
+// src/pages/ev-owner/Trips.jsx
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
 import { Upload, Plus, Calendar, MapPin, Car, TrendingUp, FileText, X, Check } from 'lucide-react';
 import { evOwnerService } from '../../services/evOwnerService';
+import { apiClient } from '../../services/api';
+
 
 export default function Trips() {
   const [trips, setTrips] = useState([]);
@@ -21,6 +24,19 @@ export default function Trips() {
     energyUsedKWh: ''
   });
 
+  const loadVehicles = async () => {
+    try {
+      const response = await apiClient.get("/vehicle/my-vehicles");
+      console.log("Vehicles:", response.data);
+      setVehicles(response.data);
+    } catch (error) {
+      console.error("Error loading vehicles:", error);
+      alert("Không tải được danh sách xe");
+    }
+  };
+
+
+
   // File import
   const [selectedFile, setSelectedFile] = useState(null);
   const [importPreview, setImportPreview] = useState([]);
@@ -33,10 +49,13 @@ export default function Trips() {
     try {
       setLoading(true);
       const [tripsData, vehiclesData] = await Promise.all([
-        evOwnerService.getTrips(),
+        evOwnerService.getTrips(),  // API trả PaginatedResult
         evOwnerService.getVehicles()
       ]);
-      setTrips(tripsData.data || []);
+
+      console.log('TripsData:', tripsData); // kiểm tra
+
+      setTrips(tripsData.items || []);     // <-- LẤY items
       setVehicles(vehiclesData.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -46,6 +65,7 @@ export default function Trips() {
       setLoading(false);
     }
   };
+
 
   const handleManualSubmit = async () => {
     if (!tripForm.vehicleId || !tripForm.distanceKm) {
@@ -86,15 +106,15 @@ export default function Trips() {
 
     setSelectedFile(file);
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       try {
         const text = event.target.result;
         const lines = text.split('\n').filter(line => line.trim());
-        
+
         // Skip header if exists
         const dataLines = lines[0].toLowerCase().includes('vehicle') ? lines.slice(1) : lines;
-        
+
         const parsed = dataLines.map((line, index) => {
           const parts = line.split(',').map(p => p.trim());
           return {
@@ -234,7 +254,7 @@ export default function Trips() {
           {/* Trips List */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeInUp animation-delay-300">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Danh sách chuyến đi</h2>
-            
+
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
@@ -320,20 +340,28 @@ export default function Trips() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Xe *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Xe *
+                </label>
+
                 <select
+                  onFocus={loadVehicles}  // <=== tải xe khi người dùng bấm vào dropdown
                   value={tripForm.vehicleId}
-                  onChange={(e) => setTripForm({...tripForm, vehicleId: e.target.value})}
+                  onChange={(e) =>
+                    setTripForm({ ...tripForm, vehicleId: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">Chọn xe</option>
-                  {vehicles.map(v => (
-                    <option key={v.vehicleId} value={v.vehicleId}>
+
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
                       {v.make} {v.model} ({v.year})
                     </option>
                   ))}
                 </select>
               </div>
+
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -342,7 +370,7 @@ export default function Trips() {
                     type="number"
                     step="0.1"
                     value={tripForm.distanceKm}
-                    onChange={(e) => setTripForm({...tripForm, distanceKm: e.target.value})}
+                    onChange={(e) => setTripForm({ ...tripForm, distanceKm: e.target.value })}
                     placeholder="VD: 120"
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
@@ -353,7 +381,7 @@ export default function Trips() {
                     type="number"
                     step="0.1"
                     value={tripForm.energyUsedKWh}
-                    onChange={(e) => setTripForm({...tripForm, energyUsedKWh: e.target.value})}
+                    onChange={(e) => setTripForm({ ...tripForm, energyUsedKWh: e.target.value })}
                     placeholder="VD: 35.5"
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
@@ -366,7 +394,7 @@ export default function Trips() {
                   <input
                     type="datetime-local"
                     value={tripForm.startTime}
-                    onChange={(e) => setTripForm({...tripForm, startTime: e.target.value})}
+                    onChange={(e) => setTripForm({ ...tripForm, startTime: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -375,7 +403,7 @@ export default function Trips() {
                   <input
                     type="datetime-local"
                     value={tripForm.endTime}
-                    onChange={(e) => setTripForm({...tripForm, endTime: e.target.value})}
+                    onChange={(e) => setTripForm({ ...tripForm, endTime: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>

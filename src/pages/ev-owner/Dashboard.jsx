@@ -1,3 +1,4 @@
+// src/pages/ev-owner/Dashboard.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
@@ -243,36 +244,36 @@ export const EVOwnerDashboard = () => {
             )}
           </div>
         </div>
-        </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link
-            to="/ev-owner/vehicles"
-            className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Car className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Quản lý xe</h3>
-            <p className="text-emerald-100">Thêm và quản lý xe điện của bạn</p>
-          </Link>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link
+          to="/ev-owner/vehicles"
+          className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Car className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Quản lý xe</h3>
+          <p className="text-emerald-100">Thêm và quản lý xe điện của bạn</p>
+        </Link>
 
-          <Link
-            to="/ev-owner/trips"
-            className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Calendar className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Hành trình</h3>
-            <p className="text-blue-100">Nhập và theo dõi các chuyến đi</p>
-          </Link>
+        <Link
+          to="/ev-owner/trips"
+          className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Calendar className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Hành trình</h3>
+          <p className="text-blue-100">Nhập và theo dõi các chuyến đi</p>
+        </Link>
 
-          <Link
-            to="/ev-owner/wallet"
-            className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Wallet className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Ví</h3>
-            <p className="text-green-100">Quản lý số dư và giao dịch</p>
-          </Link>
-        </div>
+        <Link
+          to="/ev-owner/wallet"
+          className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Wallet className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Ví</h3>
+          <p className="text-green-100">Quản lý số dư và giao dịch</p>
+        </Link>
+      </div>
     </Layout>
   );
 };

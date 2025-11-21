@@ -202,8 +202,8 @@ export const evOwnerService = {
   },
 
   // Get all trips
-  getTrips: async () => {
-    const response = await apiClient.get('/trips');
+  getTrips: async (page = 1, pageSize = 10) => {
+    const response = await apiClient.get(`/evowner/mytrips?page=${page}&pageSize=${pageSize}`);
     return response.data;
   },
 
