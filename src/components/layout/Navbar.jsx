@@ -81,14 +81,20 @@ export const Navbar = () => {
                 )}
                 {user.role === UserRole.Buyer && (
                   <>
-                    <Link to="/buyer/marketplace" className="text-white hover:text-emerald-100 transition-colors font-medium">
-                      Thị trường
+                    <Link to="/market" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Sàn giao dịch
                     </Link>
-                    <Link to="/buyer/my-purchases" className="text-white hover:text-emerald-100 transition-colors font-medium">
-                      Đã mua
+                    <Link to="/buyer/auctions" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Đấu giá
                     </Link>
                     <Link to="/buyer/certificates" className="text-white hover:text-emerald-100 transition-colors font-medium">
                       Chứng nhận
+                    </Link>
+                    <Link to="/buyer/purchase-history" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Lịch sử
+                    </Link>
+                    <Link to="/buyer/wallet" className="text-white hover:text-emerald-100 transition-colors font-medium">
+                      Ví
                     </Link>
                   </>
                 )}

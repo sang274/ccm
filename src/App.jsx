@@ -8,6 +8,10 @@ import { RootRedirect } from './components/RootRedirect';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { EVOwnerDashboard } from './pages/ev-owner/Dashboard';
+import EVOwnerWallet from './pages/ev-owner/Wallet';
+import EVOwnerListings from './pages/ev-owner/Listings';
+import EVOwnerVehicles from './pages/ev-owner/Vehicles';
+import EVOwnerCarbonCredits from './pages/ev-owner/CarbonCredits';
 import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
@@ -19,10 +23,13 @@ import { Reports as CVAReports } from './pages/cva/Reports';
 import { ReportDetail } from './pages/cva/ReportDetail';
 
 // BUYER pages
-import Market from './pages/buyer/market/Market';
-import CreditDetail from './pages/buyer/market/CreditDetail';
-import Auctions from './pages/buyer/market/Auctions';
-import Certificates from './pages/buyer/market/Certificates';
+import Market from './pages/buyer/Market';
+import CreditDetail from './pages/buyer/CreditDetail';
+import Auctions from './pages/buyer/Auctions';
+import Certificates from './pages/buyer/Certificates';
+import PurchaseHistory from './pages/buyer/PurchaseHistory';
+import Wallet from './pages/buyer/Wallet';
+import Deposit from './pages/buyer/Deposit';
 
 // Admin pages
 import { Users } from './pages/admin/Users';
@@ -55,6 +62,38 @@ function App() {
                             element={
                                 <ProtectedRoute allowedRoles={[0]}>
                                     <EVOwnerDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/ev-owner/wallet"
+                            element={
+                                <ProtectedRoute allowedRoles={[0]}>
+                                    <EVOwnerWallet />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/ev-owner/listings"
+                            element={
+                                <ProtectedRoute allowedRoles={[0]}>
+                                    <EVOwnerListings />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/ev-owner/vehicles"
+                            element={
+                                <ProtectedRoute allowedRoles={[0]}>
+                                    <EVOwnerVehicles />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/ev-owner/carbon-credits"
+                            element={
+                                <ProtectedRoute allowedRoles={[0]}>
+                                    <EVOwnerCarbonCredits />
                                 </ProtectedRoute>
                             }
                         />
@@ -111,7 +150,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/credit/:id"
+                            path="/buyer/credit/:id"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <CreditDetail />
@@ -119,7 +158,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/auctions"
+                            path="/buyer/auctions"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <Auctions />
@@ -127,10 +166,34 @@ function App() {
                             }
                         />
                         <Route
-                            path="/buyer/market/certificates"
+                            path="/buyer/certificates"
                             element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                     <Certificates />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/buyer/purchase-history"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <PurchaseHistory />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/buyer/wallet"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <Wallet />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/buyer/wallet/deposit"
+                            element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                    <Deposit />
                                 </ProtectedRoute>
                             }
                         />
