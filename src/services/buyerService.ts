@@ -130,4 +130,10 @@ export const buyerService = {
     return response.data;
   },
 
+  // Create wallet for buyer
+  createWallet: async () => {
+    const response = await apiClient.post('/wallet/create-my-wallet');
+    return response.data;
+  },
+
 };
