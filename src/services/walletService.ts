@@ -1,9 +1,32 @@
 //src/services/walletService.ts
 import { apiClient } from './api';
-import { Wallet, WalletTransaction } from '../types';
+
+export interface WalletTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  asset: string;
+  createdAt: string;
+  metadata?: any;
+}
+
+export interface Wallet {
+  id: string;
+  userId: string;
+  fiatBalance: number;
+  carbonBalance: number;
+  currency: string;
+  updatedAt: string;
+  user: {
+    email: string;
+    fullName?: string;
+  };
+  transactions: WalletTransaction[];
+}
+
 
 export const walletService = {
-  async getAll() {
+  async getAllWallets(): Promise<Wallet[]> {
     const response = await apiClient.get<Wallet[]>('/wallet');
     return response.data;
   },
@@ -35,8 +58,10 @@ export const walletService = {
 };
 
 export const walletTransactionService = {
-  async getAll() {
-    const response = await apiClient.get<WalletTransaction[]>('/wallet-transaction');
+  async getWalletTransactions(walletId: string): Promise<WalletTransaction[]> {
+    const response = await apiClient.get<WalletTransaction[]>(
+      `/wallet-transaction/wallet/${walletId}`
+    );
     return response.data;
   },
 

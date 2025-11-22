@@ -1,20 +1,22 @@
+//src/pages/ev-owner/CarbonCredits.jsx
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
 import { Calculator, Package, TrendingUp, CheckCircle, Plus, DollarSign, Gavel, X } from 'lucide-react';
 import { evOwnerService } from '../../services/evOwnerService';
+import { carbonCreditService } from '../../services/carbonCreditService';
 import { TransactionsTab } from './components/TransactionsTab';
+import CarbonCreditForm from '../../components/common/CarbonCreditForm';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function CarbonCredits() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('calculate');
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Calculate tab state
   const [carbonCredits, setCarbonCredits] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [totalUnits, setTotalUnits] = useState('');
-  const [metadata, setMetadata] = useState('');
-  const [creating, setCreating] = useState(false);
   
   // Listings tab state
   const [listings, setListings] = useState([]);
@@ -29,7 +31,7 @@ export default function CarbonCredits() {
     startingBid: ''
   });
   const [creatingListing, setCreatingListing] = useState(false);
-  
+
   // Transactions tab state
   const [transactions, setTransactions] = useState([]);
 
@@ -40,15 +42,17 @@ export default function CarbonCredits() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [walletData, creditsData, listingsData, transactionsData] = await Promise.all([
+      const [walletData, creditsResponse, listingsData, transactionsData] = await Promise.all([
         evOwnerService.getWallet(),
-        evOwnerService.getCarbonCredits(),
+        evOwnerService.getMyCarbonCredits(1, 50), // Use user-specific method
         evOwnerService.getListings(),
         evOwnerService.getTransactions()
       ]);
-      
+
       setWallet(walletData.data || { balance: 150.75, totalEarned: 500, totalSold: 349.25, pendingCredits: 25 });
-      setCarbonCredits(creditsData.data || []);
+      // Handle different response structures
+      const credits = creditsResponse?.data?.items || creditsResponse?.items || creditsResponse?.data || [];
+      setCarbonCredits(credits);
       setListings(listingsData.data || []);
       setTransactions(transactionsData.data || []);
     } catch (error) {
@@ -63,29 +67,11 @@ export default function CarbonCredits() {
     }
   };
 
-  const handleCreateCredit = async () => {
-    if (!totalUnits || totalUnits <= 0) {
-      alert('Vui lòng nhập số lượng tín chỉ hợp lệ');
-      return;
-    }
-
-    try {
-      setCreating(true);
-      await evOwnerService.createCarbonCredit({
-        totalUnits: Number(totalUnits),
-        metadata: metadata || undefined
-      });
-      alert('Tạo tín chỉ carbon thành công!');
-      setShowCreateModal(false);
-      setTotalUnits('');
-      setMetadata('');
-      loadData();
-    } catch (error) {
-      console.error('Error creating carbon credit:', error);
-      alert('Không thể tạo tín chỉ. Vui lòng thử lại.');
-    } finally {
-      setCreating(false);
-    }
+  const handleCarbonCreditSuccess = (newCredit) => {
+    // Refresh data after successful creation
+    loadData();
+    // Optionally show success message
+    alert('Tạo tín chỉ carbon thành công!');
   };
 
   const handleCreateListing = async () => {
@@ -136,71 +122,68 @@ export default function CarbonCredits() {
             <p className="text-gray-600 dark:text-gray-300 mt-1">Quản lý và giao dịch tín chỉ carbon</p>
           </div>
 
-        {/* Wallet Summary */}
-        {wallet && (
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white animate-fadeInUp animation-delay-100">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Số dư hiện tại</p>
-                <p className="text-3xl font-bold">{wallet.balance.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Tổng kiếm được</p>
-                <p className="text-2xl font-bold">{wallet.totalEarned.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Đã bán</p>
-                <p className="text-2xl font-bold">{wallet.totalSold.toFixed(2)}</p>
-                <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
-              </div>
-              <div>
-                <p className="text-emerald-100 text-sm mb-1">Đang chờ</p>
-                <p className="text-2xl font-bold">{wallet.pendingCredits}</p>
-                <p className="text-emerald-100 text-xs mt-1">tín chỉ</p>
+          {/* Wallet Summary */}
+          {wallet && (
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white animate-fadeInUp animation-delay-100">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Số dư hiện tại</p>
+                  <p className="text-3xl font-bold">{Number(wallet?.balance ?? 0).toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Tổng kiếm được</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.totalEarned ?? 0).toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Đã bán</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.totalSold ?? 0).toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Đang chờ</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.pendingCredits ?? 0).toFixed(2)}</p>
+                  <p className="text-emerald-100 text-xs mt-1">tín chỉ</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fadeInUp animation-delay-200">
-          <div className="flex border-b border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setActiveTab('calculate')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'calculate'
+          {/* Tabs */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fadeInUp animation-delay-200">
+            <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setActiveTab('calculate')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'calculate'
                   ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <Calculator className="inline h-5 w-5 mr-2" />
-              Tính toán CO₂
-            </button>
-            <button
-              onClick={() => setActiveTab('listings')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'listings'
+                  }`}
+              >
+                <Calculator className="inline h-5 w-5 mr-2" />
+                Tính toán CO₂
+              </button>
+              <button
+                onClick={() => setActiveTab('listings')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'listings'
                   ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <Package className="inline h-5 w-5 mr-2" />
-              Niêm yết ({listings.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('transactions')}
-              className={`flex-1 px-6 py-4 font-semibold transition-all ${
-                activeTab === 'transactions'
+                  }`}
+              >
+                <Package className="inline h-5 w-5 mr-2" />
+                Niêm yết ({listings.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('transactions')}
+                className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'transactions'
                   ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <TrendingUp className="inline h-5 w-5 mr-2" />
-              Giao dịch ({transactions.length})
-            </button>
-          </div>
+                  }`}
+              >
+                <TrendingUp className="inline h-5 w-5 mr-2" />
+                Giao dịch ({transactions.length})
+              </button>
+            </div>
 
           {/* Tab Content */}
           <div className="p-6">
@@ -208,95 +191,41 @@ export default function CarbonCredits() {
             {activeTab === 'calculate' && (
               <CarbonCreditsTab
                 carbonCredits={carbonCredits}
-                showCreateModal={showCreateModal}
-                setShowCreateModal={setShowCreateModal}
-                totalUnits={totalUnits}
-                setTotalUnits={setTotalUnits}
-                metadata={metadata}
-                setMetadata={setMetadata}
-                creating={creating}
-                handleCreateCredit={handleCreateCredit}
+                onCreateCredit={() => setShowCreateModal(true)}
               />
             )}
 
-            {/* Listings Tab */}
-            {activeTab === 'listings' && (
-              <ListingsTabContent
-                listings={listings}
-                showCreateListing={showCreateListing}
-                setShowCreateListing={setShowCreateListing}
-                listingFormData={listingFormData}
-                setListingFormData={setListingFormData}
-                creatingListing={creatingListing}
-                handleCreateListing={handleCreateListing}
-              />
-            )}
+              {/* Listings Tab */}
+              {activeTab === 'listings' && (
+                <ListingsTabContent
+                  listings={listings}
+                  showCreateListing={showCreateListing}
+                  setShowCreateListing={setShowCreateListing}
+                  listingFormData={listingFormData}
+                  setListingFormData={setListingFormData}
+                  creatingListing={creatingListing}
+                  handleCreateListing={handleCreateListing}
+                />
+              )}
 
-            {/* Transactions Tab */}
-            {activeTab === 'transactions' && (
-              <TransactionsTab
-                transactions={transactions}
-                loadData={loadData}
-              />
-            )}
+              {/* Transactions Tab */}
+              {activeTab === 'transactions' && (
+                <TransactionsTab
+                  transactions={transactions}
+                  loadData={loadData}
+                />
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </Layout>
 
       {/* Modals - Rendered outside Layout */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 animate-fadeInScale">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tạo tín chỉ Carbon</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Số lượng (tấn CO₂) *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={totalUnits}
-                  onChange={(e) => setTotalUnits(e.target.value)}
-                  placeholder="VD: 0.01"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Ghi chú (tùy chọn)
-                </label>
-                <textarea
-                  value={metadata}
-                  onChange={(e) => setMetadata(e.target.value)}
-                  placeholder="Thông tin bổ sung..."
-                  rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={handleCreateCredit}
-                disabled={creating}
-                className="flex-1 bg-emerald-600 text-white px-4 py-3 rounded-lg hover:bg-emerald-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
-              >
-                {creating ? 'Đang tạo...' : 'Tạo tín chỉ'}
-              </button>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300 font-semibold"
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CarbonCreditForm
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCarbonCreditSuccess}
+      />
 
       {showCreateListing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
@@ -313,7 +242,7 @@ export default function CarbonCredits() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loại niêm yết</label>
                 <select
                   value={listingFormData.listingType}
-                  onChange={(e) => setListingFormData({...listingFormData, listingType: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, listingType: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="fixed">Giá cố định</option>
@@ -326,7 +255,7 @@ export default function CarbonCredits() {
                 <input
                   type="number"
                   value={listingFormData.quantity}
-                  onChange={(e) => setListingFormData({...listingFormData, quantity: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, quantity: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
@@ -337,7 +266,7 @@ export default function CarbonCredits() {
                   <input
                     type="number"
                     value={listingFormData.pricePerUnit}
-                    onChange={(e) => setListingFormData({...listingFormData, pricePerUnit: e.target.value})}
+                    onChange={(e) => setListingFormData({ ...listingFormData, pricePerUnit: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -348,7 +277,7 @@ export default function CarbonCredits() {
                     <input
                       type="number"
                       value={listingFormData.startingBid}
-                      onChange={(e) => setListingFormData({...listingFormData, startingBid: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, startingBid: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -357,7 +286,7 @@ export default function CarbonCredits() {
                     <input
                       type="number"
                       value={listingFormData.minBidIncrement}
-                      onChange={(e) => setListingFormData({...listingFormData, minBidIncrement: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, minBidIncrement: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -366,7 +295,7 @@ export default function CarbonCredits() {
                     <input
                       type="datetime-local"
                       value={listingFormData.auctionEndTime}
-                      onChange={(e) => setListingFormData({...listingFormData, auctionEndTime: e.target.value})}
+                      onChange={(e) => setListingFormData({ ...listingFormData, auctionEndTime: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -377,7 +306,7 @@ export default function CarbonCredits() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mô tả</label>
                 <textarea
                   value={listingFormData.description}
-                  onChange={(e) => setListingFormData({...listingFormData, description: e.target.value})}
+                  onChange={(e) => setListingFormData({ ...listingFormData, description: e.target.value })}
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
@@ -512,21 +441,25 @@ function CalculateTab({ distance, setDistance, vehicleType, setVehicleType, calc
 
 
 // Carbon Credits Tab Component
-function CarbonCreditsTab({ carbonCredits, showCreateModal, setShowCreateModal, totalUnits, setTotalUnits, metadata, setMetadata, creating, handleCreateCredit }) {
+function CarbonCreditsTab({ carbonCredits, onCreateCredit }) {
   const STATUS_LABELS = {
     0: 'Chờ xác minh',
     1: 'Đã phát hành',
     2: 'Đang niêm yết',
-    3: 'Đã khóa',
-    4: 'Đã bán'
+    3: 'Đang đấu giá',
+    4: 'Đã bán',
+    5: 'Đã hưu',
+    6: 'Đã hủy'
   };
 
   const STATUS_COLORS = {
     0: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400',
     1: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
     2: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400',
-    3: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400',
-    4: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400'
+    3: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400',
+    4: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400',
+    5: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400',
+    6: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
   };
 
   return (
@@ -534,7 +467,7 @@ function CarbonCreditsTab({ carbonCredits, showCreateModal, setShowCreateModal, 
       <div className="flex justify-between items-center">
         <p className="text-gray-600 dark:text-gray-300">Quản lý tín chỉ carbon của bạn</p>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={onCreateCredit}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-all"
         >
           <Calculator className="h-5 w-5" />
@@ -547,7 +480,7 @@ function CarbonCreditsTab({ carbonCredits, showCreateModal, setShowCreateModal, 
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">Chưa có tín chỉ carbon nào</p>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={onCreateCredit}
             className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-all"
           >
             <Calculator className="h-5 w-5" />
@@ -557,11 +490,11 @@ function CarbonCreditsTab({ carbonCredits, showCreateModal, setShowCreateModal, 
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {carbonCredits.map((credit) => (
-            <div key={credit.reductionId} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <div key={credit.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div className="flex justify-between items-start mb-3">
                 <Package className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[credit.status]}`}>
-                  {STATUS_LABELS[credit.status]}
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[credit.status] || STATUS_COLORS[0]}`}>
+                  {STATUS_LABELS[credit.status] || STATUS_LABELS[0]}
                 </span>
               </div>
               <div className="space-y-2 text-sm">
@@ -573,10 +506,19 @@ function CarbonCreditsTab({ carbonCredits, showCreateModal, setShowCreateModal, 
                   <span className="text-gray-600 dark:text-gray-400">Còn lại:</span>
                   <span className="font-semibold text-emerald-600 dark:text-emerald-400">{credit.availableUnits} tấn</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Ngày phát hành:</span>
-                  <span className="text-gray-900 dark:text-white">{new Date(credit.issuedAt).toLocaleDateString('vi-VN')}</span>
-                </div>
+                {credit.issuedAt && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Ngày phát hành:</span>
+                    <span className="text-gray-900 dark:text-white">{new Date(credit.issuedAt).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                )}
+                {credit.metadata && credit.metadata.description && (
+                  <div className="mt-2">
+                    <p className="text-gray-600 dark:text-gray-400 text-xs">
+                      {credit.metadata.description}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           ))}
