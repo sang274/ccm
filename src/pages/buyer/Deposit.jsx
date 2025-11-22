@@ -123,7 +123,7 @@ export default function Deposit() {
             <input
               type="number"
               min="10"
-              max="10000"
+              max="10000000000000000000"
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -132,7 +132,7 @@ export default function Deposit() {
             />
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Số tiền nạp: $10 - $10,000
+            Số tiền nạp: $10 - $10.000.000.000.000.000.000
           </p>
         </div>
 
