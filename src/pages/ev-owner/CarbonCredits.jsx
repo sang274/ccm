@@ -43,13 +43,13 @@ export default function CarbonCredits() {
       setLoading(true);
       const [walletData, creditsData, listingsData, transactionsData] = await Promise.all([
         evOwnerService.getWallet(),
-        evOwnerService.getCarbonCredits(),
+        evOwnerService.getMyCarbonCredits(),
         evOwnerService.getListings(),
         evOwnerService.getTransactions()
       ]);
 
       setWallet(walletData.data || { balance: 150.75, totalEarned: 500, totalSold: 349.25, pendingCredits: 25 });
-      setCarbonCredits(creditsData.data || []);
+      setCarbonCredits(creditsData?.data?.items || []);
       setListings(listingsData.data || []);
       setTransactions(transactionsData.data || []);
     } catch (error) {
@@ -143,22 +143,22 @@ export default function CarbonCredits() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
                   <p className="text-emerald-100 text-sm mb-1">Số dư hiện tại</p>
-                  <p className="text-3xl font-bold">{wallet.balance.toFixed(2)}</p>
+                  <p className="text-3xl font-bold">{Number(wallet?.balance ?? 0).toFixed(2)}</p>
                   <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
                 </div>
                 <div>
                   <p className="text-emerald-100 text-sm mb-1">Tổng kiếm được</p>
-                  <p className="text-2xl font-bold">{wallet.totalEarned.toFixed(2)}</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.totalEarned ?? 0).toFixed(2)}</p>
                   <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
                 </div>
                 <div>
                   <p className="text-emerald-100 text-sm mb-1">Đã bán</p>
-                  <p className="text-2xl font-bold">{wallet.totalSold.toFixed(2)}</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.totalSold ?? 0).toFixed(2)}</p>
                   <p className="text-emerald-100 text-xs mt-1">tấn CO₂</p>
                 </div>
                 <div>
                   <p className="text-emerald-100 text-sm mb-1">Đang chờ</p>
-                  <p className="text-2xl font-bold">{wallet.pendingCredits}</p>
+                  <p className="text-2xl font-bold">{Number(wallet?.pendingCredits ?? 0).toFixed(2)}</p>
                   <p className="text-emerald-100 text-xs mt-1">tín chỉ</p>
                 </div>
               </div>
@@ -171,8 +171,8 @@ export default function CarbonCredits() {
               <button
                 onClick={() => setActiveTab('calculate')}
                 className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'calculate'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
               >
                 <Calculator className="inline h-5 w-5 mr-2" />
@@ -181,8 +181,8 @@ export default function CarbonCredits() {
               <button
                 onClick={() => setActiveTab('listings')}
                 className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'listings'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
               >
                 <Package className="inline h-5 w-5 mr-2" />
@@ -191,8 +191,8 @@ export default function CarbonCredits() {
               <button
                 onClick={() => setActiveTab('transactions')}
                 className={`flex-1 px-6 py-4 font-semibold transition-all ${activeTab === 'transactions'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
               >
                 <TrendingUp className="inline h-5 w-5 mr-2" />

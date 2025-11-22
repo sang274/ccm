@@ -228,5 +228,11 @@ export const evOwnerService = {
     if (source) formData.append('source', source);
     const response = await apiClient.post('/trip-imports', formData);
     return response.data;
-  }
+  },
+
+  getMyCarbonCredits: async (page = 1, pageSize = 20) => {
+    const response = await apiClient.get(`/evowner/my-credits?page=${page}&pageSize=${pageSize}`);
+    return response.data; // { success: true, data: { items: [...], totalResults: 45, ... } }
+  },
+
 };
