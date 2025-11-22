@@ -3,14 +3,25 @@ import { apiClient } from './api';
 
 export interface Trip {
   id: string;
+  importId?: string;
+  userId: string;
   vehicleId: string;
-  startLocation: string;
-  endLocation: string;
-  distance: number;
-  startTime: string;
-  endTime: string;
-  co2Reduced: number;
-  status: string;
+  startTime?: string;
+  endTime?: string;
+  distanceKm?: number;
+  energyUsedKWh?: number;
+  routeGeo?: any;
+  createdAt: string;
+}
+
+export interface TripImport {
+  id: string;
+  userId: string;
+  vehicleId: string;
+  source?: string;
+  rawFilePath?: string;
+  importedAt: string;
+  metadata?: any;
 }
 
 export interface EmissionCalculation {
@@ -28,6 +39,7 @@ export interface CarbonWallet {
 }
 
 export interface CarbonCredit {
+  id: string;
   reductionId: string;
   ownerId: string;
   totalUnits: number;
@@ -35,12 +47,13 @@ export interface CarbonCredit {
   status: number;
   issuedAt: string;
   retiredAt?: string;
-  metadata?: string;
+  metadata?: any;
 }
 
 export interface CreateCarbonCreditRequest {
+  reductionId: string;
   totalUnits: number;
-  metadata?: string;
+  metadata?: any;
 }
 
 export interface Listing {
@@ -102,9 +115,9 @@ export const evOwnerService = {
     return response.data;
   },
 
-  // Get all vehicles
+  // Get current user's vehicles
   getVehicles: async () => {
-    const response = await apiClient.get('/vehicle');
+    const response = await apiClient.get('/vehicle/my-vehicles');
     return response.data;
   },
 
@@ -198,5 +211,40 @@ export const evOwnerService = {
   getReport: async () => {
     const response = await apiClient.get('/evowner/report');
     return response.data;
-  }
+  },
+
+  // Get all trips
+  getTrips: async (page = 1, pageSize = 10) => {
+    const response = await apiClient.get(`/evowner/mytrips?page=${page}&pageSize=${pageSize}`);
+    return response.data;
+  },
+
+  // Create a new trip
+  createTrip: async (tripData: {
+    vehicleId: string;
+    startTime?: string;
+    endTime?: string;
+    distanceKm?: number;
+    energyUsedKWh?: number;
+    routeGeo?: any;
+  }) => {
+    const response = await apiClient.post('/trips', tripData);
+    return response.data;
+  },
+
+  // Import trips from file
+  importTripsFromFile: async (file: File, vehicleId: string, source?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('vehicleId', vehicleId);
+    if (source) formData.append('source', source);
+    const response = await apiClient.post('/trip-imports', formData);
+    return response.data;
+  },
+
+  getMyCarbonCredits: async (page = 1, pageSize = 20) => {
+    const response = await apiClient.get(`/evowner/my-credits?page=${page}&pageSize=${pageSize}`);
+    return response.data; // { success: true, data: { items: [...], totalResults: 45, ... } }
+  },
+
 };

@@ -1,3 +1,4 @@
+//src/pages/ev-owner/components/ListingsTab.jsx
 import { useState } from 'react';
 import { Plus, DollarSign, Gavel, Eye, X } from 'lucide-react';
 import { evOwnerService } from '../../../services/evOwnerService';
@@ -120,7 +121,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                 <label className="block text-sm font-medium mb-2">Loại niêm yết</label>
                 <select
                   value={formData.listingType}
-                  onChange={(e) => setFormData({...formData, listingType: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, listingType: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                 >
                   <option value="fixed">Giá cố định</option>
@@ -133,7 +134,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                 <input
                   type="number"
                   value={formData.quantity}
-                  onChange={(e) => setFormData({...formData, quantity: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                 />
               </div>
@@ -144,7 +145,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                   <input
                     type="number"
                     value={formData.pricePerUnit}
-                    onChange={(e) => setFormData({...formData, pricePerUnit: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, pricePerUnit: e.target.value })}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
@@ -155,7 +156,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                     <input
                       type="number"
                       value={formData.startingBid}
-                      onChange={(e) => setFormData({...formData, startingBid: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, startingBid: e.target.value })}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
@@ -164,7 +165,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                     <input
                       type="number"
                       value={formData.minBidIncrement}
-                      onChange={(e) => setFormData({...formData, minBidIncrement: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, minBidIncrement: e.target.value })}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
@@ -173,7 +174,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                     <input
                       type="datetime-local"
                       value={formData.auctionEndTime}
-                      onChange={(e) => setFormData({...formData, auctionEndTime: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, auctionEndTime: e.target.value })}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
@@ -184,7 +185,7 @@ export function ListingsTab({ listings, showCreateListing, setShowCreateListing,
                 <label className="block text-sm font-medium mb-2">Mô tả</label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="3"
                   className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                 />

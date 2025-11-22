@@ -12,6 +12,7 @@ import EVOwnerWallet from './pages/ev-owner/Wallet';
 import EVOwnerListings from './pages/ev-owner/Listings';
 import EVOwnerVehicles from './pages/ev-owner/Vehicles';
 import EVOwnerCarbonCredits from './pages/ev-owner/CarbonCredits';
+import EVOwnerTrips from './pages/ev-owner/Trips';
 import { BuyerDashboard } from './pages/buyer/Dashboard';
 import { CVADashboard } from './pages/cva/Dashboard';
 import { AdminDashboard } from './pages/admin/Dashboard';
@@ -96,6 +97,14 @@ function App() {
                             element={
                                 <ProtectedRoute allowedRoles={[0]}>
                                     <EVOwnerCarbonCredits />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/ev-owner/trips"
+                            element={
+                                <ProtectedRoute allowedRoles={[0]}>
+                                    <EVOwnerTrips />
                                 </ProtectedRoute>
                             }
                         />

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/ev-owner/Dashboard.jsx
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { useAuth } from '../../contexts/AuthContext';
-import { walletService } from '../../services/walletService';
-import { vehicleService } from '../../services/vehicleService';
-import { carbonCreditService } from '../../services/carbonCreditService';
-import { Car, Leaf, Wallet, TrendingUp, DollarSign, Calendar } from 'lucide-react';
+import { evOwnerService } from '../../services/evOwnerService';
+import { Car, Leaf, Wallet, DollarSign, Calendar, MapPin } from 'lucide-react';
 
 export const EVOwnerDashboard = () => {
   const { user } = useAuth();
   const [wallet, setWallet] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [credits, setCredits] = useState([]);
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,17 +19,26 @@ export const EVOwnerDashboard = () => {
       if (!user) return;
 
       try {
-        const [walletData, vehiclesData, creditsData] = await Promise.all([
-          walletService.getByUserId(user.id),
-          vehicleService.getByUserId(user.id),
-          carbonCreditService.getAll(1, 100),
+        const [walletData, vehiclesData, creditsData, tripsData] = await Promise.all([
+          evOwnerService.getWallet(),
+          evOwnerService.getVehicles(),
+          evOwnerService.getCarbonCredits(),
+          evOwnerService.getTrips(),
         ]);
 
-        setWallet(walletData);
-        setVehicles(vehiclesData);
-        setCredits(creditsData.filter((c) => c.ownerId === user.id));
+        console.log('Dashboard data:', { walletData, vehiclesData, creditsData, tripsData });
+
+        // Handle different response structures
+        setWallet(walletData?.data || walletData || { balance: 0, totalEarned: 0, totalSold: 0, pendingCredits: 0 });
+        setVehicles(Array.isArray(vehiclesData) ? vehiclesData : (vehiclesData?.data || []));
+        setCredits(Array.isArray(creditsData) ? creditsData : (creditsData?.data || []));
+        setTrips(Array.isArray(tripsData) ? tripsData : (tripsData?.data || []));
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        setWallet({ balance: 0, totalEarned: 0, totalSold: 0, pendingCredits: 0 });
+        setVehicles([]);
+        setCredits([]);
+        setTrips([]);
       } finally {
         setLoading(false);
       }
@@ -49,7 +58,9 @@ export const EVOwnerDashboard = () => {
   }
 
   const totalCredits = credits.reduce((sum, c) => sum + (c.availableUnits || 0), 0);
-  const totalRevenue = wallet?.fiatBalance || 0;
+  const totalRevenue = wallet?.balance || 0;
+  const totalDistance = trips.reduce((sum, trip) => sum + (trip.distanceKm || 0), 0);
+  const totalTrips = trips.length;
 
   return (
     <Layout>
@@ -96,20 +107,64 @@ export const EVOwnerDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-amber-500 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tín chỉ đã bán</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{credits.filter(c => c.status === 4).length}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng chuyến đi</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{totalTrips}</p>
               </div>
-              <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full">
-                <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+              <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
+                <MapPin className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Chuyến đi gần đây</h2>
+            {trips.length === 0 ? (
+              <div className="text-center py-8">
+                <MapPin className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400 mb-4">Chưa có chuyến đi nào</p>
+                <Link
+                  to="/ev-owner/trips"
+                  className="inline-block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+                >
+                  Thêm chuyến đi
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {trips.slice(0, 3).map((trip) => (
+                  <div key={trip.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
+                        <MapPin className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">{trip.distanceKm || 0} km</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {trip.startTime ? new Date(trip.startTime).toLocaleDateString('vi-VN') : 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-green-600 dark:text-green-400">
+                        {((trip.distanceKm || 0) * 0.12).toFixed(2)} kg CO₂
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {trips.length > 3 && (
+                  <Link to="/ev-owner/trips" className="block text-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium mt-4">
+                    Xem tất cả ({trips.length} chuyến đi)
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Xe của tôi</h2>
             {vehicles.length === 0 ? (
@@ -189,35 +244,35 @@ export const EVOwnerDashboard = () => {
             )}
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link
-            to="/ev-owner/vehicles"
-            className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Car className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Quản lý xe</h3>
-            <p className="text-emerald-100">Thêm và quản lý xe điện của bạn</p>
-          </Link>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link
+          to="/ev-owner/vehicles"
+          className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Car className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Quản lý xe</h3>
+          <p className="text-emerald-100">Thêm và quản lý xe điện của bạn</p>
+        </Link>
 
-          <Link
-            to="/ev-owner/trips"
-            className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Calendar className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Hành trình</h3>
-            <p className="text-blue-100">Nhập và theo dõi các chuyến đi</p>
-          </Link>
+        <Link
+          to="/ev-owner/trips"
+          className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Calendar className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Hành trình</h3>
+          <p className="text-blue-100">Nhập và theo dõi các chuyến đi</p>
+        </Link>
 
-          <Link
-            to="/ev-owner/wallet"
-            className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
-          >
-            <Wallet className="h-12 w-12 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Ví</h3>
-            <p className="text-green-100">Quản lý số dư và giao dịch</p>
-          </Link>
-        </div>
+        <Link
+          to="/ev-owner/wallet"
+          className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white hover:shadow-xl transition-shadow"
+        >
+          <Wallet className="h-12 w-12 mb-4" />
+          <h3 className="text-xl font-bold mb-2">Ví</h3>
+          <p className="text-green-100">Quản lý số dư và giao dịch</p>
+        </Link>
       </div>
     </Layout>
   );

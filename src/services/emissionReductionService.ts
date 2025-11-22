@@ -1,30 +1,26 @@
 import { apiClient } from './api';
 import { EmissionReduction, EmissionStatus } from '../types';
 
-export interface EmissionReductionResponse extends EmissionReduction {
-  // Additional properties that might come from the API
-}
-
 export const emissionReductionService = {
   async getAll(page: number = 1, pageSize: number = 10) {
-    const response = await apiClient.get<EmissionReductionResponse[]>('/EmissionReduction', {
+    const response = await apiClient.get<EmissionReduction[]>('/EmissionReduction', {
       params: { page, pageSize }
     });
     return response.data;
   },
 
   async getById(id: string) {
-    const response = await apiClient.get<EmissionReductionResponse>(`/EmissionReduction/${id}`);
+    const response = await apiClient.get<EmissionReduction>(`/EmissionReduction/${id}`);
     return response.data;
   },
 
   async getByUserId(userId: string, page: number = 1, pageSize: number = 20) {
     try {
-      const response = await apiClient.get<EmissionReductionResponse[]>(`/EmissionReduction/user/${userId}`, {
+      const response = await apiClient.get<EmissionReduction[]>(`/EmissionReduction/user/${userId}`, {
         params: { page, pageSize }
       });
       return response.data;
-    } catch (error) {
+    } catch {
       // Fallback if the endpoint doesn't exist
       console.warn('EmissionReduction/user endpoint not available, falling back to getAll');
       const allReductions = await this.getAll(page, pageSize);
@@ -34,14 +30,14 @@ export const emissionReductionService = {
 
   async getVerified(userId?: string) {
     try {
-      const response = await apiClient.get<EmissionReductionResponse[]>('/EmissionReduction/verified', {
+      const response = await apiClient.get<EmissionReduction[]>('/EmissionReduction/verified', {
         params: userId ? { userId } : {}
       });
       return response.data;
-    } catch (error) {
+    } catch {
       // Fallback: return approved reductions from getAll
       const allReductions = await this.getAll(1, 50);
-      return allReductions.filter((reduction: any) => 
+      return allReductions.filter((reduction: EmissionReduction) => 
         reduction.status === EmissionStatus.Approved && 
         (!userId || reduction.userId === userId)
       );
@@ -49,12 +45,12 @@ export const emissionReductionService = {
   },
 
   async create(data: Partial<EmissionReduction>) {
-    const response = await apiClient.post<EmissionReductionResponse>('/EmissionReduction', data);
+    const response = await apiClient.post<EmissionReduction>('/EmissionReduction', data);
     return response.data;
   },
 
   async update(id: string, data: Partial<EmissionReduction>) {
-    const response = await apiClient.put<EmissionReductionResponse>(`/EmissionReduction/${id}`, data);
+    const response = await apiClient.put<EmissionReduction>(`/EmissionReduction/${id}`, data);
     return response.data;
   },
 
