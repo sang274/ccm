@@ -39,6 +39,7 @@ export interface CarbonWallet {
 }
 
 export interface CarbonCredit {
+  id: string;
   reductionId: string;
   ownerId: string;
   totalUnits: number;
@@ -46,12 +47,13 @@ export interface CarbonCredit {
   status: number;
   issuedAt: string;
   retiredAt?: string;
-  metadata?: string;
+  metadata?: any;
 }
 
 export interface CreateCarbonCreditRequest {
+  reductionId: string;
   totalUnits: number;
-  metadata?: string;
+  metadata?: any;
 }
 
 export interface Listing {
@@ -133,15 +135,25 @@ export const evOwnerService = {
     return response.data;
   },
 
-  // Create carbon credit
+  // Create carbon credit - delegates to carbonCreditService
   createCarbonCredit: async (data: CreateCarbonCreditRequest) => {
-    const response = await apiClient.post('/CarbonCredit', data);
+    // This method is kept for backward compatibility but should use carbonCreditService directly
+    const response = await apiClient.post('/CarbonCredit', {
+      reductionId: data.reductionId,
+      ownerId: '', // Will be set by the calling component
+      totalUnits: data.totalUnits,
+      availableUnits: data.totalUnits,
+      issuedAt: new Date().toISOString(),
+      metadata: data.metadata
+    });
     return response.data;
   },
 
-  // Get all carbon credits
-  getCarbonCredits: async () => {
-    const response = await apiClient.get('/CarbonCredit');
+  // Get all carbon credits for current user
+  getCarbonCredits: async (page: number = 1, pageSize: number = 10) => {
+    const response = await apiClient.get('/CarbonCredit', {
+      params: { page, pageSize }
+    });
     return response.data;
   },
 
