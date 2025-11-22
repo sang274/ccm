@@ -1,14 +1,18 @@
 // src/pages/buyer/Wallet.jsx
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
-import { Wallet as WalletIcon, DollarSign, TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownRight, Calendar } from 'lucide-react';
+import { Wallet as WalletIcon, DollarSign, TrendingUp, TrendingDown, Plus, ArrowUpRight, ArrowDownRight, Calendar, AlertCircle } from 'lucide-react';
 import { buyerService } from '../../services/buyerService';
 
 export default function Wallet() {
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasWallet, setHasWallet] = useState(true);
+  const [showCreateWalletModal, setShowCreateWalletModal] = useState(false);
+  const [creatingWallet, setCreatingWallet] = useState(false);
 
   // MOCK DATA – DỰ PHÒNG KHI API LỖI
   const mockTransactions = [
@@ -28,26 +32,58 @@ export default function Wallet() {
     try {
       setLoading(true);
 
-      const wallet = await buyerService.getMyWallet(); // ← có thể là null!
+      const response = await buyerService.getMyWallet();
+      console.log('Wallet response:', response);
 
-      // SỬA DÒNG NÀY: kiểm tra null hoặc undefined
-      if (wallet && wallet.fiatBalance !== undefined && wallet.fiatBalance !== null) {
-        setBalance(wallet.fiatBalance);
-        setTransactions([]); // chưa có transaction thật
+      // Check if wallet exists - handle both direct response and wrapped response
+      const wallet = response?.data || response;
+      
+      if (wallet && (wallet.fiatBalance !== undefined || wallet.walletId || wallet.id)) {
+        setHasWallet(true);
+        setBalance(wallet.fiatBalance || 0);
+        setTransactions([]);
       } else {
-        // Người dùng chưa có ví → vẫn dùng mock (rất bình thường)
-        console.info('Chưa tạo ví → hiển thị mock tạm thời');
-        setBalance(0);
-        setTransactions(mockTransactions);
+        // User doesn't have a wallet
+        setHasWallet(false);
+        setShowCreateWalletModal(true);
       }
 
     } catch (error) {
-      console.warn('Lỗi kết nối API ví:', error.message || error);
-      setBalance(0);
-      setTransactions(mockTransactions);
+      console.error('Error loading wallet:', error);
+      // Check if it's a 404 (no wallet found)
+      if (error.response?.status === 404 || error.message?.includes('not found') || error.message?.includes('No wallet')) {
+        setHasWallet(false);
+        setShowCreateWalletModal(true);
+      } else {
+        // Other errors - assume wallet exists but show 0 balance
+        setHasWallet(true);
+        setBalance(0);
+        setTransactions([]);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateWallet = async () => {
+    try {
+      setCreatingWallet(true);
+      await buyerService.createWallet();
+      alert('Tạo ví thành công!');
+      setShowCreateWalletModal(false);
+      setHasWallet(true);
+      loadWalletData();
+    } catch (error) {
+      console.error('Error creating wallet:', error);
+      alert('Không thể tạo ví. Vui lòng thử lại.');
+    } finally {
+      setCreatingWallet(false);
+    }
+  };
+
+  const handleDeclineWallet = () => {
+    setShowCreateWalletModal(false);
+    navigate('/buyer/dashboard');
   };
 
   // Tính tổng nạp / tổng chi (dùng mock hoặc thật đều được)
@@ -83,8 +119,9 @@ export default function Wallet() {
   };
 
   return (
-    <Layout>
-      <div className="space-y-6">
+    <>
+      <Layout>
+        <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -190,7 +227,42 @@ export default function Wallet() {
             </div>
           )}
         </div>
-      </div>
-    </Layout>
+        </div>
+      </Layout>
+
+      {/* Create Wallet Modal */}
+      {showCreateWalletModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 animate-fadeInScale">
+            <div className="text-center mb-6">
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                <AlertCircle className="h-10 w-10 text-yellow-600 dark:text-yellow-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Bạn chưa có ví</h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Bạn cần tạo ví để có thể nạp tiền và mua tín chỉ carbon. Bạn có muốn tạo ví ngay bây giờ không?
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCreateWallet}
+                disabled={creatingWallet}
+                className="flex-1 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-all disabled:opacity-50 font-semibold"
+              >
+                {creatingWallet ? 'Đang tạo...' : 'Tạo ví'}
+              </button>
+              <button
+                onClick={handleDeclineWallet}
+                disabled={creatingWallet}
+                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all font-semibold"
+              >
+                Để sau
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -46,19 +46,32 @@ export const emissionReductionService = {
       try {
         if (userId) {
           const userReductions = await this.getByUserId(userId, 1, 50);
+<<<<<<< HEAD
           return userReductions.filter((reduction: EmissionReduction) => 
+=======
+          return userReductions.filter((reduction: EmissionReduction) =>
+>>>>>>> ea2a2439eb87a360b1540d6f70fc2e5270bbfe6d
             reduction.status === EmissionStatus.Approved
           );
         }
       } catch {
         // Ignore this fallback error
       }
+<<<<<<< HEAD
       
       // Fallback 2: Try getting all emission reductions and filter
       try {
         const allReductions = await this.getAll(1, 50);
         return allReductions.filter((reduction: EmissionReduction) => 
           reduction.status === EmissionStatus.Approved && 
+=======
+
+      // Fallback 2: Try getting all emission reductions and filter
+      try {
+        const allReductions = await this.getAll(1, 50);
+        return allReductions.filter((reduction: EmissionReduction) =>
+          reduction.status === EmissionStatus.Approved &&
+>>>>>>> ea2a2439eb87a360b1540d6f70fc2e5270bbfe6d
           (!userId || reduction.userId === userId)
         );
       } catch {
@@ -78,7 +91,11 @@ export const emissionReductionService = {
           },
           {
             id: 'mock-2',
+<<<<<<< HEAD
             tripId: 'trip-mock-2', 
+=======
+            tripId: 'trip-mock-2',
+>>>>>>> ea2a2439eb87a360b1540d6f70fc2e5270bbfe6d
             userId: userId,
             reducedCO2Kg: 45.2,
             creditsEquivalent: 0.0452,
